@@ -12,7 +12,7 @@ import { GlobalService } from "./global.service";
 export class UserService {
   constructor(private readonly globalService: GlobalService) {}
 
-  /*   public getAll(
+    public getAll(
     pageNumber: number,
     pageElements: number,
     start: string,
@@ -25,7 +25,7 @@ export class UserService {
           return res;
         })
       );
-  } */
+  }
 
   public getById(id: number) {
     return this.globalService.get(Api.Endpoints.USER.BASE + "/" + id).pipe(

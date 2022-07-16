@@ -21,7 +21,20 @@ export const Endpoint = {
       "workshop" +
       addPaginationWithDates(page, elements, start, end),
   },
-  USER:{
+  USER: {
     BASE: environment.apiHost + environment.apiVersion + "user",
-  }
+    ALL: (page, elements, start, end) =>
+      environment.apiHost +
+      environment.apiVersion +
+      "user" +
+      addPaginationWithDates(page, elements, start, end),
+  },
+  CAR: {
+    BASE: (documentType, documentNumber, plate) =>
+      `https://api.verifik.co/v2/co/runt/consultarVehiculo?documentType=${documentType}&documentNumber=${documentNumber}&plate=${plate}`,
+    OWNER: (plate) =>
+      `https://api.verifik.co/v2/co/soat/consultarVehiculo?plate=${plate}`,
+    PENALTY: (documentType, documentNumber) =>
+      `https://api.verifik.co/v2/co/simit/consultarComparendos?documentType=${documentType}&documentNumber=${documentNumber}`,
+  },
 };

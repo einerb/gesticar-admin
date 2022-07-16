@@ -8,6 +8,7 @@ import { TablesComponent } from "../../pages/tables/tables.component";
 import { WorkshopsComponent } from "src/app/pages/workshops/workshops.component";
 import { UsersComponent } from "src/app/pages/users/users.component";
 import { AuthGuard } from "src/app/services/guards/auth.guard";
+import { WorkshopProfileComponent } from "src/app/pages/workshop-profile/workshop-profile.component";
 
 export const AdminLayoutRoutes: Routes = [
   {
@@ -24,6 +25,11 @@ export const AdminLayoutRoutes: Routes = [
   {
     path: "user-profile/:id",
     component: UserProfileComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "workshop-profile/:id",
+    component: WorkshopProfileComponent,
     canActivate: [AuthGuard],
   },
   { path: "tables", component: TablesComponent },

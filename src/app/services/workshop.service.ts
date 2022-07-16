@@ -27,12 +27,14 @@ export class WorkshopService {
       );
   }
 
-  public getById(id: string) {
-    return this.globalService.get(Api.Endpoints.WORKSHOP.BASE + "/" + id).pipe(
-      map((res) => {
-        return res;
-      })
-    );
+  public getByNit(nit: string) {
+    return this.globalService
+      .post(Api.Endpoints.WORKSHOP.BASE + "/nit", {nit: nit})
+      .pipe(
+        map((res) => {
+          return res;
+        })
+      );
   }
 
   public create(id: number, workshop: Workshop) {

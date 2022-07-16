@@ -32,6 +32,7 @@
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",
     "ng-block-ui": "^3.0.2",
+    "ngb-modal": "^2.0.3",
     "ngx-clipboard": "15.0.1",
     "ngx-toastr": "14.2.2",
     "nouislider": "15.5.1",

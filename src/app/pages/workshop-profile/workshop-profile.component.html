@@ -3,23 +3,23 @@
     class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
     style="
       min-height: 600px;
-      background-image: url(assets/img/theme/profile-cover.jpg);
+      background-image: url(assets/img/theme/car-profile-cover.jpg);
       background-size: cover;
       background-position: center top;
     "
   >
     <!-- Mask -->
-    <span class="mask bg-gradient-success opacity-8"></span>
+    <span class="mask bg-gradient-danger opacity-8"></span>
     <!-- Header container -->
     <div class="container-fluid d-flex align-items-center">
       <div class="row">
         <div class="col-lg-7 col-md-10">
-          <h1 class="display-2 text-white"><ng-container *ngIf="allowEdit">Hola, </ng-container>{{ infoFullUser?.name | titlecase }} <ng-container *ngIf="!allowEdit">{{ infoFullUser?.name | titlecase }}</ng-container></h1>
+          <h1 class="display-2 text-white">{{ infoFullWorkshop?.name }}</h1>
           <p class="text-white mt-0 mb-5">
             This is your profile page. You can see the progress you've made with
             your work and manage your projects or assigned tasks
           </p>
-          <a href="#!" class="btn btn-info" *ngIf="allowEdit">Editar perfil</a>
+          <a href="#!" class="btn btn-info">Editar taller</a>
         </div>
       </div>
     </div>
@@ -31,7 +31,7 @@
           <div class="row justify-content-center">
             <div class="col-lg-3 order-lg-2">
               <div class="card-profile-image">
-                <img src="{{ infoFullUser?.avatar }}" class="rounded-circle" />
+                <img src="assets/img/theme/sketch.jpg" class="rounded-circle" />
               </div>
             </div>
           </div>
@@ -39,12 +39,12 @@
             class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4"
           >
             <div class="d-flex justify-content-between">
-              <span class="btn btn-sm btn-success mr-5">{{
+              <span class="btn btn-sm btn-success mr-5">
                 infoFullUser?.state ? "Conectado" : "Inactivo"
-              }}</span>
-              <span class="btn btn-sm btn-default ml-2 float-right">{{
+              </span>
+              <span class="btn btn-sm btn-default ml-2 float-right">
                 role
-              }}</span>
+              </span>
             </div>
           </div>
           <div class="card-body pt-0 pt-md-4">
@@ -54,15 +54,15 @@
                   class="card-profile-stats d-flex justify-content-between mt-md-5"
                 >
                   <div>
-                    <span class="heading">{{ servicesCreated }}</span>
+                    <span class="heading"> servicesCreated </span>
                     <span class="description">Creado</span>
                   </div>
                   <div>
-                    <span class="heading">{{ servicesActive }}</span>
+                    <span class="heading">servicesActive </span>
                     <span class="description">Activo</span>
                   </div>
                   <div>
-                    <span class="heading">{{ servicesCompleted }}</span>
+                    <span class="heading"> servicesCompleted </span>
                     <span class="description">Completados</span>
                   </div>
                 </div>
@@ -70,37 +70,26 @@
             </div>
             <div class="text-center">
               <h3>
-                {{ infoFullUser?.name }} {{ infoFullUser?.lastname
-                }}<span class="font-weight-light">, {{ age }}</span>
+                infoFullUser?.name  infoFullUser?.lastname
+                <span class="font-weight-light">,  age </span>
               </h3>
               <div class="h5 font-weight-300">
-                <i class="ni location_pin mr-2"></i>{{ infoFullUser?.city }},
+                <i class="ni location_pin mr-2"></i> infoFullUser?.city ,
                 Colombia
               </div>
               <div class="h5 mt-4">
                 <i class="ni business_briefcase-24 mr-2"></i
-                >{{ infoFullUser?.occupation }}
+                > infoFullUser?.occupation 
               </div>
               <div>
                 <i class="ni education_hat mr-2"></i>Registro desde
-                {{ createdAt }}
+                 createdAt 
               </div>
               <hr class="my-4" />
-              <h6 class="heading-small text-muted mb-4">
-                Información Adicional Automotor
-              </h6>
-              <div>
-                Información
-                <a href="javascript:void(0)" (click)="openModalPenalty()"
-                  >Comparendos</a
-                >
-              </div>
-              <div>
-                Información
-                <a href="javascript:void(0)" (click)="openModalOwner()"
-                  >Propietarios</a
-                >
-              </div>
+              <p>
+                Ryan — the name taken by Melbourne-raised, Brooklyn-based Nick
+                Murphy — writes, performs and records all of his own music.
+              </p>
             </div>
           </div>
         </div>
@@ -110,10 +99,7 @@
           <div class="card-header bg-white border-0">
             <div class="row align-items-center">
               <div class="col-8">
-                <h3 class="mb-0">{{ allowEdit ? "Mi" : "Su" }} cuenta</h3>
-              </div>
-              <div class="col-4 text-right" *ngIf="allowEdit">
-                <a href="#!" class="btn btn-sm btn-primary">Settings</a>
+                <h3 class="mb-0"> allowEdit ? "Mi" : "Su"  cuenta</h3>
               </div>
             </div>
           </div>
@@ -183,14 +169,7 @@
               </div>
               <hr class="my-4" />
               <!-- Address -->
-              <h6 class="heading-small text-muted mb-4">
-                Información Automotor
-              </h6>
-              <div class="pl-lg-4">
-                <label *ngIf="infoFullUser?.car === null"
-                  >No tiene un automotor asociado</label
-                >
-              </div>
+              <h6 class="heading-small text-muted mb-4">Contact information</h6>
               <div class="pl-lg-4">
                 <div class="row">
                   <div class="col-md-12">
@@ -252,6 +231,21 @@
                   </div>
                 </div>
               </div>
+              <hr class="my-4" />
+              <!-- Description -->
+              <h6 class="heading-small text-muted mb-4">About me</h6>
+              <div class="pl-lg-4">
+                <div class="form-group">
+                  <label>About Me</label>
+                  <textarea
+                    rows="4"
+                    class="form-control form-control-alternative"
+                    placeholder="A few words about you ..."
+                  >
+  A beautiful Dashboard for Bootstrap 4. It is Free and Open Source.</textarea
+                  >
+                </div>
+              </div>
             </form>
           </div>
         </div>
@@ -259,85 +253,3 @@
     </div>
   </div>
 </block-ui>
-
-<!-- Propietarios -->
-<modal #infoOwnerModal>
-  <modal-header>
-    <h1>Propietarios</h1>
-  </modal-header>
-  <modal-content>
-    <div class="table-responsive">
-      <table class="table align-items-center table-flush">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Tipo Doc.</th>
-            <th scope="col">Identificación</th>
-            <th scope="col">Nombre completo</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let owner of infoOwner; let i = index">
-            <th>{{ i + 1 }}</th>
-            <td>{{ owner?.documentType | uppercase }}</td>
-            <td>{{ owner?.documentNumber }}</td>
-            <td>{{ owner?.fullname | titlecase }}</td>
-          </tr>
-          <tr *ngIf="infoOwner.length === 0">
-            <th colspan="4" class="text-center">
-              <span class="mb-0 text-sm">No información de propietarios</span>
-            </th>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </modal-content>
-  <modal-footer>
-    <button class="btn btn-primary" (click)="closeModal()">Cerrar</button>
-  </modal-footer>
-</modal>
-
-<!-- Comparendos -->
-<modal #infoPenaltyModal>
-  <modal-header>
-    <h1>Comparendos</h1>
-  </modal-header>
-  <modal-content>
-    <div class="table-responsive">
-      <table class="table align-items-center table-flush">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col">Número</th>
-            <th scope="col">Fecha</th>
-            <th scope="col">Descripción</th>
-            <th scope="col">Dirección</th>
-            <th scope="col">Estado</th>
-            <th scope="col">Secretaría</th>
-            <th scope="col">Fotodetección</th>
-            <th scope="col">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let penalty of infoPenalty">
-            <th>{{ penalty?.number }}</th>
-            <td>{{ penalty?.date }}</td>
-            <td>{{ penalty?.description }}</td>
-            <td>{{ penalty?.address | titlecase }}</td>
-            <td>{{ penalty?.state | titlecase }}</td>
-            <td>{{ penalty?.secretary | titlecase }}</td>
-            <td>{{ penalty?.photodetection === "S" ? "Si" : "No" }}</td>
-            <td>$ {{ penalty?.total }}</td>
-          </tr>
-          <tr *ngIf="infoPenalty.length === 0">
-            <th colspan="8" class="text-center">
-              <span class="mb-0 text-sm">No información de comparendos</span>
-            </th>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </modal-content>
-  <modal-footer>
-    <button class="btn btn-primary" (click)="closeModal()">Cerrar</button>
-  </modal-footer>
-</modal>

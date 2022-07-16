@@ -1,1 +1,123 @@
-<p>users works!</p>
+<block-ui>
+  <div class="header bg-gradient-success pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+      <div class="header-body">
+        <!-- Card stats -->
+      </div>
+    </div>
+  </div>
+  <!-- Page content -->
+  <div class="container-fluid mt--7">
+    <!-- Table -->
+    <div class="row">
+      <div class="col">
+        <div class="card shadow">
+          <div class="card-header border-0">
+            <h3 class="mb-0">Usuarios registrados</h3>
+          </div>
+          <div class="table-responsive">
+            <table class="table align-items-center table-flush">
+              <thead class="thead-light">
+                <tr>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Correo</th>
+                  <th scope="col">Ciudad</th>
+                  <th scope="col">Telefono</th>
+                  <th scope="col">Creación</th>
+                  <th scope="col">Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of users">
+                  <th scope="row">
+                    <div class="media align-items-center">
+                      <a
+                        [routerLink]="['/user-profile/', item.identification]"
+                        class="avatar rounded-circle mr-3"
+                      >
+                        <img alt="{{ item.name }}" src="{{ item.avatar }}" />
+                      </a>
+                      <div class="media-body">
+                        <a
+                          class="mb-0 text-sm"
+                          [routerLink]="['/user-profile/', item.identification]"
+                          >{{ item.name | titlecase }}</a
+                        >
+                      </div>
+                    </div>
+                  </th>
+                  <td>{{ item.email }}</td>
+                  <td>{{ item.city | titlecase }}</td>
+                  <td>{{ item.phone }}</td>
+                  <td>{{ item.createdAt }}</td>
+                  <td>
+                    <span class="badge badge-dot mr-4">
+                      <i
+                        [ngClass]="item.state ? 'bg-success' : 'bg-warning'"
+                      ></i>
+                      {{ item.state ? "Activo" : "Inactivo" }}
+                    </span>
+                  </td>
+                </tr>
+                <tr *ngIf="users.length == 0">
+                  <th colspan="6" class="text-center">
+                    <div class="media-body">
+                      <span class="mb-0 text-sm">No hay talleres</span>
+                    </div>
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer py-4">
+            <nav aria-label="...">
+              <ul class="pagination justify-content-end mb-0">
+                <li
+                  class="page-item"
+                  [ngClass]="{
+                    disabled: disabledPrevious,
+                    '': disabledPrevious
+                  }"
+                >
+                  <a
+                    class="page-link"
+                    href="javascript:void(0)"
+                    tabindex="-1"
+                    (click)="previous()"
+                  >
+                    <i class="fas fa-angle-left"></i>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                </li>
+                <li
+                  class="page-item"
+                  [ngClass]="{
+                    disabled: disabledNext || currentElements>users.length,
+                    '': !disabledNext
+                  }"
+                >
+                  <a
+                    class="page-link"
+                    href="javascript:void(0)"
+                    (click)="next()"
+                  >
+                    <i class="fas fa-angle-right"></i>
+                    <span class="sr-only">Next</span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+            <div class="row align-items-center justify-content-xl-between mt-3">
+              <div class="col-xl-6">
+                <label>Pág. {{ page }} de {{ totalPages }}</label>
+              </div>
+              <div class="col-xl-6 text-right">
+                <label>Resultados: {{ elementsPerPage }}</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</block-ui>

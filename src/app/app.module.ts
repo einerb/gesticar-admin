@@ -11,7 +11,6 @@ import { AppRoutingModule } from "./app.routing";
 import { AuthInterceptorService } from "./services/interceptor/auth-interceptor.service";
 import { AuthLayoutComponent } from "./layouts/auth-layout/auth-layout.component";
 import { ComponentsModule } from "./components/components.module";
-import { BlockUIModule } from "ng-block-ui";
 
 @NgModule({
   imports: [
