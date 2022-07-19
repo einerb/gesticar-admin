@@ -17,7 +17,7 @@ export class WorkshopsComponent implements OnInit {
   public totalPages: number;
   public page: number = 1;
   public elementsPerPage: number;
-  public currentElements: number = 1;
+  public currentElements: number = 5;
   public disabledPrevious: boolean = true;
   public disabledNext: boolean = false;
 

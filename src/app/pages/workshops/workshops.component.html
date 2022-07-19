@@ -1,5 +1,5 @@
 <block-ui>
-  <div class="header bg-gradient-danger pb-8 pt-5 pt-md-8">
+  <div class="header bg-gradient-warning pb-8 pt-5 pt-md-8">
     <div class="container-fluid">
       <div class="header-body">
         <!-- Card stats -->
@@ -23,6 +23,7 @@
                   <th scope="col">Dirección</th>
                   <th scope="col">Estado</th>
                   <th scope="col">Administradores</th>
+                  <th scope="col">Clientes</th>
                   <th scope="col">Ocupación</th>
                   <th scope="col"></th>
                 </tr>
@@ -81,6 +82,28 @@
                     </div>
                   </td>
                   <td>
+                    <div class="avatar-group" *ngIf="item.capacity > 0">
+                      <ng-container *ngFor="let user of item.users">
+                        <a
+                          [routerLink]="['/user-profile/', user.identification]"
+                          class="avatar avatar-sm"
+                          data-toggle="tooltip"
+                          data-original-title="{{ user?.name }} {{
+                            user?.lastname
+                          }}"
+                          ngbTooltip="{{ user?.name }} {{ user?.lastname }}"
+                          *ngIf="user.role.role === 'USER'"
+                        >
+                          <img
+                            alt="{{ user?.name }} {{ user?.lastname }}"
+                            src="{{ user?.avatar }}"
+                            class="rounded-circle"
+                          />
+                        </a>
+                      </ng-container>
+                    </div>
+                  </td>
+                  <td>
                     <div class="d-flex align-items-center">
                       <span class="mr-2">{{ item.capacity }}%</span>
                       <div>
@@ -124,7 +147,7 @@
                   </td>
                 </tr>
                 <tr *ngIf="workshops.length == 0">
-                  <th colspan="6" class="text-center">
+                  <th colspan="7" class="text-center">
                     <div class="media-body">
                       <span class="mb-0 text-sm">No hay talleres</span>
                     </div>
@@ -139,8 +162,7 @@
                 <li
                   class="page-item"
                   [ngClass]="{
-                    disabled:
-                      disabledPrevious,
+                    disabled: disabledPrevious,
                     '': disabledPrevious
                   }"
                 >

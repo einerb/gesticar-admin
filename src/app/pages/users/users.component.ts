@@ -4,6 +4,7 @@ import { BlockUI, NgBlockUI } from "ng-block-ui";
 
 import { UserService } from "src/app/services/";
 import { User } from "src/app/entities/user.entity";
+import { ROLE } from "src/app/entities/enum";
 
 @Component({
   selector: "app-users",
@@ -16,9 +17,10 @@ export class UsersComponent implements OnInit {
   public totalPages: number;
   public page: number = 1;
   public elementsPerPage: number;
-  public currentElements: number = 3;
+  public currentElements: number = 5;
   public disabledPrevious: boolean = true;
   public disabledNext: boolean = false;
+  public role: string;
 
   constructor(private readonly userService: UserService) {
     this.blockUI.start();
@@ -26,6 +28,36 @@ export class UsersComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllUser(this.page);
+  }
+
+  public next() {
+    this.disabledPrevious = false;
+
+    if (this.page < this.totalPages) {
+      this.page++;
+      this.getAllUser(this.page);
+    }
+
+    if (this.page === this.totalPages) {
+      this.disabledNext = true;
+    } else {
+      this.disabledNext = false;
+    }
+  }
+
+  public previous() {
+    this.disabledNext = false;
+
+    if (this.page > 1) {
+      this.page--;
+      this.getAllUser(this.page);
+    }
+
+    if (this.page === 1) {
+      this.disabledPrevious = true;
+    } else {
+      this.disabledPrevious = false;
+    }
   }
 
   private getAllUser(page: number) {
@@ -60,35 +92,5 @@ export class UsersComponent implements OnInit {
         this.totalPages = res.data.totalPages;
         this.elementsPerPage = res.data.elementsPerPage;
       });
-  }
-
-  public next() {
-    this.disabledPrevious = false;
-
-    if (this.page < this.totalPages) {
-      this.page++;
-      this.getAllUser(this.page);
-    }
-
-    if (this.page === this.totalPages) {
-      this.disabledNext = true;
-    } else {
-      this.disabledNext = false;
-    }
-  }
-
-  public previous() {
-    this.disabledNext = false;
-
-    if (this.page > 1) {
-      this.page--;
-      this.getAllUser(this.page);
-    }
-
-    if (this.page === 1) {
-      this.disabledPrevious = true;
-    } else {
-      this.disabledPrevious = false;
-    }
   }
 }

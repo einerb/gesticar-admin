@@ -1,5 +1,5 @@
 <block-ui>
-  <div class="header bg-gradient-success pb-8 pt-5 pt-md-8">
+  <div class="header bg-gradient-warning pb-8 pt-5 pt-md-8">
     <div class="container-fluid">
       <div class="header-body">
         <!-- Card stats -->
@@ -24,6 +24,7 @@
                   <th scope="col">Ciudad</th>
                   <th scope="col">Telefono</th>
                   <th scope="col">Creación</th>
+                  <th scope="col">Rol</th>
                   <th scope="col">Estado</th>
                 </tr>
               </thead>
@@ -50,6 +51,7 @@
                   <td>{{ item.city | titlecase }}</td>
                   <td>{{ item.phone }}</td>
                   <td>{{ item.createdAt }}</td>
+                  <td>{{ item.role  }}</td>
                   <td>
                     <span class="badge badge-dot mr-4">
                       <i
@@ -62,7 +64,7 @@
                 <tr *ngIf="users.length == 0">
                   <th colspan="6" class="text-center">
                     <div class="media-body">
-                      <span class="mb-0 text-sm">No hay talleres</span>
+                      <span class="mb-0 text-sm">No hay usuarios</span>
                     </div>
                   </th>
                 </tr>
@@ -92,7 +94,7 @@
                 <li
                   class="page-item"
                   [ngClass]="{
-                    disabled: disabledNext || currentElements>users.length,
+                    disabled: disabledNext || currentElements > users.length,
                     '': !disabledNext
                   }"
                 >
