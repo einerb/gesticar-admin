@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { Router } from "@angular/router";
 import { map } from "rxjs/operators";
+import Swal from "sweetalert2";
 
 import { Api } from "../shared/api";
 import { GlobalService } from "./global.service";
@@ -33,9 +34,18 @@ export class AuthService {
       .pipe(
         map((res) => {
           this.userInfo = this.getDecodedAccessToken(res.data.accessToken);
-          localStorage.setItem("accessToken", res.data["accessToken"]);
+          if (this.userInfo.role.role === 'USER') {
+            Swal.fire({
+              title: `Fallo de operación`,
+              text: "Usuario permitido solo para aplicación móvil",
+              icon: "error",
+              confirmButtonText: "Ok",
+            });
+          } else {
+            localStorage.setItem("accessToken", res.data["accessToken"]);
 
-          return res.data;
+            return res.data;
+          }
         })
       );
   }

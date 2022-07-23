@@ -1,4 +1,5 @@
 import { Car } from "./car.entity";
+import { Workshop } from "./workshop.entity";
 
 export class User {
   id?: number;
@@ -7,7 +8,7 @@ export class User {
   lastname?: string;
   gender?: boolean;
   avatar?: string;
-  role: string;
+  role: Role;
   occupation?: string;
   city?: string;
   address?: string;
@@ -18,6 +19,7 @@ export class User {
   state?: boolean;
   createdAt?: string;
   car?: [Car];
+  workshop?: Workshop
 
   constructor(item?: User) {
     this.id = item && item.id ? item.id : 0;
@@ -26,7 +28,6 @@ export class User {
     this.lastname = item && item.lastname ? item.lastname : "";
     this.gender = item && item.gender ? item.gender : true;
     this.avatar = item && item.avatar ? item.avatar : "";
-    this.role = item && item.role ? item.role : "";
     this.occupation = item && item.occupation ? item.occupation : "";
     this.city = item && item.city ? item.city : "";
     this.address = item && item.address ? item.address : "";
@@ -37,4 +38,8 @@ export class User {
     this.state = item && item.state ? item.state : true;
     this.createdAt = item && item.createdAt ? item.createdAt : "";
   }
+}
+
+export class Role {
+  role: string;
 }

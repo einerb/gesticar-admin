@@ -12,7 +12,7 @@ import { GlobalService } from "./global.service";
 export class UserService {
   constructor(private readonly globalService: GlobalService) {}
 
-    public getAll(
+  public getAll(
     pageNumber: number,
     pageElements: number,
     start: string,
@@ -35,14 +35,12 @@ export class UserService {
     );
   }
 
-  public create(id: number, user: User) {
-    return this.globalService
-      .post(Api.Endpoints.USER.BASE + `/${id}`, user)
-      .pipe(
-        map((res) => {
-          return res;
-        })
-      );
+  public create(user: User) {
+    return this.globalService.post(Api.Endpoints.USER.BASE, user).pipe(
+      map((res) => {
+        return res;
+      })
+    );
   }
 
   public update(id: string, user: User) {
@@ -55,7 +53,7 @@ export class UserService {
       );
   }
 
-  public delete(user: string) {
+  public delete(user: number) {
     return this.globalService.delete(Api.Endpoints.USER.BASE + "/" + user).pipe(
       map((res) => {
         return res;

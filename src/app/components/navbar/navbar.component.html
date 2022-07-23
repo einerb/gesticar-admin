@@ -13,14 +13,12 @@
         <a class="nav-link pr-0" role="button" ngbDropdownToggle>
           <div class="media align-items-center">
             <span class="avatar avatar-sm rounded-circle">
-              <img
-                alt="{ userInfo.name }}"
-                src="{{ userInfo.avatar }}"
-              />
+              <img alt="{ userInfo.name }}" src="{{ userInfo.avatar }}" />
             </span>
             <div class="media-body ml-2 d-none d-lg-block">
               <span class="mb-0 text-sm font-weight-bold"
-                >{{ userInfo.name }} {{ userInfo.lastname }}</span
+                >{{ userInfo.name | titlecase }}
+                {{ userInfo.lastname | titlecase }}</span
               >
             </div>
           </div>
@@ -39,7 +37,7 @@
           </a>
           <a
             routerLinkActive="active"
-            [routerLink]="['/user-profile']"
+            [routerLink]="['/settings']"
             class="dropdown-item"
           >
             <i class="ni ni-settings-gear-65"></i>

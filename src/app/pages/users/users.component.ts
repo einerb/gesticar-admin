@@ -2,9 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import * as moment from "moment";
 import { BlockUI, NgBlockUI } from "ng-block-ui";
 
-import { UserService } from "src/app/services/";
+import { GlobalService, UserService } from "src/app/services/";
 import { User } from "src/app/entities/user.entity";
-import { ROLE } from "src/app/entities/enum";
+import { Workshop } from "src/app/entities/workshop.entity";
 
 @Component({
   selector: "app-users",
@@ -17,12 +17,15 @@ export class UsersComponent implements OnInit {
   public totalPages: number;
   public page: number = 1;
   public elementsPerPage: number;
-  public currentElements: number = 5;
+  public currentElements: number = 12;
   public disabledPrevious: boolean = true;
   public disabledNext: boolean = false;
   public role: string;
 
-  constructor(private readonly userService: UserService) {
+  constructor(
+    private readonly userService: UserService,
+    public readonly globalService: GlobalService
+  ) {
     this.blockUI.start();
   }
 
@@ -70,27 +73,32 @@ export class UsersComponent implements OnInit {
       .getAll(page, this.currentElements, start, end)
       .subscribe((res) => {
         this.blockUI.stop();
-        res.data.records.forEach((element) => {
-          this.users.push({
-            identification: element.identification,
-            name: element.name,
-            lastname: element.lastname,
-            gender: element.gender,
-            avatar: element.avatar,
-            role: element.role.role,
-            occupation: element.occupation,
-            city: element.city,
-            address: element.address,
-            birthdate: element.birthdate,
-            phone: element.phone,
-            email: element.email,
-            state: element.state,
-            createdAt: moment(element.createdAt).format("LLL"),
+        if (res.code > 1000) {
+          res.data?.records.forEach((element) => {
+            this.users.push({
+              identification: element.identification,
+              name: element.name,
+              lastname: element.lastname,
+              gender: element.gender,
+              avatar: element.avatar,
+              role: element.role.role,
+              occupation: element.occupation,
+              city: element.city,
+              address: element.address,
+              birthdate: element.birthdate,
+              phone: element.phone,
+              email: element.email,
+              state: element.state,
+              workshop: element?.workshops[0],
+              createdAt: moment(element.createdAt).format("LLL"),
+            });
           });
-        });
 
-        this.totalPages = res.data.totalPages;
-        this.elementsPerPage = res.data.elementsPerPage;
+          this.totalPages = res.data.totalPages;
+          this.elementsPerPage = res.data.elementsPerPage;
+        } else {
+          this.globalService.onFailure(res.error, res.code);
+        }
       });
   }
 }

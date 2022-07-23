@@ -7,6 +7,7 @@ import {
 } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { tap } from "rxjs/operators";
+import Swal from "sweetalert2";
 
 import { GlobalService } from "../index";
 import { Router } from "@angular/router";
@@ -44,10 +45,6 @@ export class AuthInterceptorService {
     return next.handle(request).pipe(
       tap(
         (event) => {
-          const codes: number[] = [
-            1001, 1002, 1006, 1007, 1012, 1014, 1015, 1018,
-          ];
-
           if (event instanceof HttpResponse) {
             if (!Api.PRODUCTION && Api.DEBUG) {
               console.log(
@@ -64,10 +61,10 @@ export class AuthInterceptorService {
             }
 
             if (event.body.code > 1000) {
-              this.globalService.onSuccess(event.body.message, event.body.code);
+              this.globalService.onSuccess(event.body.message);
             }
             if (event.body.code <= 1000) {
-              this.globalService.onFailure(event.body.error, event.body.code);
+              this.globalService.onFailure(event.body.error);
               return event;
             } else {
               return;

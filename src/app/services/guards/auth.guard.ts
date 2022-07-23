@@ -37,13 +37,6 @@ export class AuthGuard implements CanActivate, CanActivateChild {
 
     this.authService.redirectUrl = url;
 
-    Swal.fire({
-      title: "Autorización denegada",
-      text: "Usted no tiene permisos para acceder a esta área. Para ingresar al área debe iniciar sesión previamente!",
-      icon: "warning",
-      confirmButtonText: "Ok",
-    });
-
     this.router.navigate(["/"], { queryParams: { returnUrl: url } });
 
     return true;

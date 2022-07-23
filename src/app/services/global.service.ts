@@ -10,6 +10,7 @@ import { Observable, throwError } from "rxjs";
 import { catchError } from "rxjs/operators";
 
 import { Api } from "../shared/api";
+import { Router } from "@angular/router";
 
 @Injectable({
   providedIn: "root",
@@ -17,7 +18,7 @@ import { Api } from "../shared/api";
 export class GlobalService {
   private httpOptions;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private httpClient: HttpClient, private router: Router) {
     this.httpOptions = {
       headers: new HttpHeaders({
         "Content-Type": "application/json",
@@ -30,6 +31,15 @@ export class GlobalService {
    * @description Manejo de errores en las peticiones.
    */
   private handleError(error: HttpErrorResponse) {
+    if (error.status === 400) {
+      Swal.fire({
+        title: `Fallo de operación`,
+        text: error.error?.message[0],
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    }
+
     if (!Api.PRODUCTION) {
       console.error(error);
     }
@@ -113,16 +123,29 @@ export class GlobalService {
       .pipe(catchError(this.handleError));
   }
 
-  public onFailure(err: string, code: number) {
-    Swal.fire({
-      title: `Fallo de operación`,
-      text: err,
-      icon: "error",
-      confirmButtonText: "Ok",
-    });
+  public onFailure(err: string, code?: number) {
+    if (code === 18) {
+      Swal.fire({
+        title: `Fallo de operación`,
+        text: err,
+        icon: "error",
+        confirmButtonText: "Ok",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          this.router.navigateByUrl("/dashboard");
+        }
+      });
+    } else {
+      Swal.fire({
+        title: `Fallo de operación`,
+        text: err,
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    }
   }
 
-  public onSuccess(msg: string, code: number) {
+  public onSuccess(msg: string) {
     Swal.fire({
       title: `Operación exitosa`,
       text: msg,

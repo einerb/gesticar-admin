@@ -1,0 +1,39 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ title }}</h4>
+</div>
+<div class="modal-body">
+  <div class="table-responsive">
+    <table class="table align-items-center table-flush">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Tipo Doc.</th>
+          <th scope="col">Identificación</th>
+          <th scope="col">Nombre completo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let owner of data; let i = index">
+          <th>{{ i + 1 }}</th>
+          <td>{{ owner?.documentType | uppercase }}</td>
+          <td>{{ owner?.documentNumber }}</td>
+          <td>{{ owner?.fullname | titlecase }}</td>
+        </tr>
+        <tr *ngIf="data.length === 0">
+          <th colspan="4" class="text-center">
+            <span class="mb-0 text-sm">No información de propietarios</span>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-outline-dark"
+    (click)="activeModal.close('Close click')"
+  >
+    Cerrar
+  </button>
+</div>

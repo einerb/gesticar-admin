@@ -29,7 +29,7 @@ export class WorkshopService {
 
   public getByNit(nit: string) {
     return this.globalService
-      .post(Api.Endpoints.WORKSHOP.BASE + "/nit", {nit: nit})
+      .post(Api.Endpoints.WORKSHOP.BASE + "/nit", { nit: nit })
       .pipe(
         map((res) => {
           return res;
@@ -37,14 +37,12 @@ export class WorkshopService {
       );
   }
 
-  public create(id: number, workshop: Workshop) {
-    return this.globalService
-      .post(Api.Endpoints.WORKSHOP.BASE + `/${id}`, workshop)
-      .pipe(
-        map((res) => {
-          return res;
-        })
-      );
+  public create(workshop: Workshop) {
+    return this.globalService.post(Api.Endpoints.WORKSHOP.BASE, workshop).pipe(
+      map((res) => {
+        return res;
+      })
+    );
   }
 
   public update(id: string, workshop: Workshop) {
@@ -57,7 +55,7 @@ export class WorkshopService {
       );
   }
 
-  public delete(workshop: string) {
+  public delete(workshop: number) {
     return this.globalService
       .delete(Api.Endpoints.WORKSHOP.BASE + "/" + workshop)
       .pipe(

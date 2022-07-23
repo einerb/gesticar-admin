@@ -9,6 +9,7 @@ import { WorkshopsComponent } from "src/app/pages/workshops/workshops.component"
 import { UsersComponent } from "src/app/pages/users/users.component";
 import { AuthGuard } from "src/app/services/guards/auth.guard";
 import { WorkshopProfileComponent } from "src/app/pages/workshop-profile/workshop-profile.component";
+import { SettingsComponent } from "src/app/pages/settings/settings.component";
 
 export const AdminLayoutRoutes: Routes = [
   {
@@ -30,6 +31,11 @@ export const AdminLayoutRoutes: Routes = [
   {
     path: "workshop-profile/:id",
     component: WorkshopProfileComponent,
+    canActivate: [AuthGuard],
+  },
+  {
+    path: "settings",
+    component: SettingsComponent,
     canActivate: [AuthGuard],
   },
   { path: "tables", component: TablesComponent },

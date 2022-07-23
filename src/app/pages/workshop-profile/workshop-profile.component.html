@@ -13,13 +13,13 @@
     <!-- Header container -->
     <div class="container-fluid d-flex align-items-center">
       <div class="row">
-        <div class="col-lg-7 col-md-10">
-          <h1 class="display-2 text-white">{{ infoFullWorkshop?.name }}</h1>
-          <p class="text-white mt-0 mb-5">
-            This is your profile page. You can see the progress you've made with
-            your work and manage your projects or assigned tasks
-          </p>
-          <a href="#!" class="btn btn-info">Editar taller</a>
+        <div class="col-lg-12 col-md-12">
+          <h1 class="display-2 text-white">
+            {{ infoFullWorkshop?.name | titlecase }}
+          </h1>
+          <a (click)="openModalNew()" class="btn btn-info">{{
+            userInfo?.role.role === "ROOT" ? "Asignar Admin" : "Agregar Cliente"
+          }}</a>
         </div>
       </div>
     </div>
@@ -28,68 +28,39 @@
     <div class="row">
       <div class="col-xl-4 order-xl-2 mb-5 mb-xl-0">
         <div class="card card-profile shadow">
-          <div class="row justify-content-center">
+          <div class="row justify-content-center mb-5">
             <div class="col-lg-3 order-lg-2">
               <div class="card-profile-image">
                 <img src="assets/img/theme/sketch.jpg" class="rounded-circle" />
               </div>
             </div>
           </div>
-          <div
-            class="card-header text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4"
-          >
-            <div class="d-flex justify-content-between">
-              <span class="btn btn-sm btn-success mr-5">
-                infoFullUser?.state ? "Conectado" : "Inactivo"
-              </span>
-              <span class="btn btn-sm btn-default ml-2 float-right">
-                role
-              </span>
-            </div>
-          </div>
+          <div style="padding: 40px 0"></div>
           <div class="card-body pt-0 pt-md-4">
-            <div class="row">
-              <div class="col">
-                <div
-                  class="card-profile-stats d-flex justify-content-between mt-md-5"
-                >
-                  <div>
-                    <span class="heading"> servicesCreated </span>
-                    <span class="description">Creado</span>
-                  </div>
-                  <div>
-                    <span class="heading">servicesActive </span>
-                    <span class="description">Activo</span>
-                  </div>
-                  <div>
-                    <span class="heading"> servicesCompleted </span>
-                    <span class="description">Completados</span>
-                  </div>
-                </div>
-              </div>
-            </div>
             <div class="text-center">
               <h3>
-                infoFullUser?.name  infoFullUser?.lastname
-                <span class="font-weight-light">,  age </span>
+                {{ infoFullWorkshop?.name }},
+                <span class="font-weight-light">
+                  {{ infoFullWorkshop?.state ? "Activo" : "Inactivo" }}
+                </span>
               </h3>
               <div class="h5 font-weight-300">
-                <i class="ni location_pin mr-2"></i> infoFullUser?.city ,
-                Colombia
+                <i class="ni location_pin mr-2"></i>
+                {{ infoFullWorkshop?.address }}, Atlántico
               </div>
               <div class="h5 mt-4">
-                <i class="ni business_briefcase-24 mr-2"></i
-                > infoFullUser?.occupation 
+                <i class="ni business_briefcase-24 mr-2"></i>
+                Tel. {{ infoFullWorkshop?.phone }}
               </div>
               <div>
-                <i class="ni education_hat mr-2"></i>Registro desde
-                 createdAt 
+                <i class="ni education_hat mr-2"></i>Registro desde<br />
+                {{ createdAt }}
               </div>
               <hr class="my-4" />
-              <p>
-                Ryan — the name taken by Melbourne-raised, Brooklyn-based Nick
-                Murphy — writes, performs and records all of his own music.
-              </p>
+              <div>
+                <i class="ni education_hat mr-2"></i>Última actualización<br />
+                {{ updatedAt }}
+              </div>
             </div>
           </div>
         </div>
@@ -99,154 +70,360 @@
           <div class="card-header bg-white border-0">
             <div class="row align-items-center">
               <div class="col-8">
-                <h3 class="mb-0"> allowEdit ? "Mi" : "Su"  cuenta</h3>
+                <h3 class="mb-0">Información básica</h3>
               </div>
             </div>
           </div>
           <div class="card-body">
-            <form>
-              <h6 class="heading-small text-muted mb-4">Información usuario</h6>
+            <form [formGroup]="editForm" novalidate>
+              <h6 class="heading-small text-muted mb-4">Información taller</h6>
               <div class="pl-lg-4">
                 <div class="row">
                   <div class="col-lg-6">
                     <div class="form-group">
-                      <label class="form-control-label" for="input-username"
-                        >Username</label
-                      >
+                      <label class="form-control-label">NIT</label>
                       <input
                         type="text"
-                        id="input-username"
                         class="form-control form-control-alternative"
-                        placeholder="Username"
-                        value="lucky.jesse"
+                        placeholder="NIT"
+                        formControlName="nit"
+                        readonly
                       />
                     </div>
                   </div>
                   <div class="col-lg-6">
                     <div class="form-group">
-                      <label class="form-control-label" for="input-email"
-                        >Email address</label
+                      <label class="form-control-label"
+                        >Nombre o razón social</label
                       >
                       <input
-                        type="email"
-                        id="input-email"
+                        type="text"
                         class="form-control form-control-alternative"
-                        placeholder="jesse@example.com"
+                        placeholder="Nombre"
+                        formControlName="name"
                       />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="f.name.hasError('required')"
+                      >
+                        El nombre es requerido *
+                      </span>
                     </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-lg-6">
                     <div class="form-group">
-                      <label class="form-control-label" for="input-first-name"
-                        >First name</label
-                      >
+                      <label class="form-control-label">Dirección</label>
                       <input
                         type="text"
-                        id="input-first-name"
                         class="form-control form-control-alternative"
-                        placeholder="First name"
-                        value="Lucky"
+                        placeholder="Dirección"
+                        formControlName="address"
                       />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="f.address.hasError('required')"
+                      >
+                        La dirección es requerida *
+                      </span>
                     </div>
                   </div>
                   <div class="col-lg-6">
                     <div class="form-group">
-                      <label class="form-control-label" for="input-last-name"
-                        >Last name</label
-                      >
+                      <label class="form-control-label">Teléfono</label>
                       <input
                         type="text"
-                        id="input-last-name"
                         class="form-control form-control-alternative"
-                        placeholder="Last name"
-                        value="Jesse"
+                        placeholder="Teléfono"
+                        formControlName="phone"
                       />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="f.phone.hasError('required')"
+                      >
+                        El teléfono es requerido *
+                      </span>
                     </div>
                   </div>
                 </div>
-              </div>
-              <hr class="my-4" />
-              <!-- Address -->
-              <h6 class="heading-small text-muted mb-4">Contact information</h6>
-              <div class="pl-lg-4">
-                <div class="row">
-                  <div class="col-md-12">
+                <div class="row" *ngIf="userInfo?.role.role === 'ROOT'">
+                  <div class="col-lg-6">
                     <div class="form-group">
-                      <label class="form-control-label" for="input-address"
-                        >Address</label
-                      >
-                      <input
-                        id="input-address"
-                        class="form-control form-control-alternative"
-                        placeholder="Home Address"
-                        value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
-                        type="text"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-4">
-                    <div class="form-group">
-                      <label class="form-control-label" for="input-city"
-                        >City</label
-                      >
-                      <input
-                        type="text"
-                        id="input-city"
-                        class="form-control form-control-alternative"
-                        placeholder="City"
-                        value="New York"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-lg-4">
-                    <div class="form-group">
-                      <label class="form-control-label" for="input-country"
-                        >Country</label
-                      >
-                      <input
-                        type="text"
-                        id="input-country"
-                        class="form-control form-control-alternative"
-                        placeholder="Country"
-                        value="United States"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-lg-4">
-                    <div class="form-group">
-                      <label class="form-control-label" for="input-country"
-                        >Postal code</label
+                      <label class="form-control-label"
+                        >Cantidad ocupación</label
                       >
                       <input
                         type="number"
-                        id="input-postal-code"
                         class="form-control form-control-alternative"
-                        placeholder="Postal code"
+                        placeholder="Cantidad ocupación"
+                        formControlName="limit_users"
                       />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="f.limit_users.hasError('required')"
+                      >
+                        El cantidad ocupacional es requerida *
+                      </span>
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="f.limit_users.hasError('pattern')"
+                      >
+                        La cantidad ocupacional debe ser mayor a 0 *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Estado</label><br />
+                      <label class="custom-toggle">
+                        <input
+                          type="checkbox"
+                          checked=""
+                          formControlName="state"
+                        />
+                        <span
+                          class="custom-toggle-slider rounded-circle"
+                        ></span>
+                      </label>
                     </div>
                   </div>
                 </div>
-              </div>
-              <hr class="my-4" />
-              <!-- Description -->
-              <h6 class="heading-small text-muted mb-4">About me</h6>
-              <div class="pl-lg-4">
-                <div class="form-group">
-                  <label>About Me</label>
-                  <textarea
-                    rows="4"
-                    class="form-control form-control-alternative"
-                    placeholder="A few words about you ..."
-                  >
-  A beautiful Dashboard for Bootstrap 4. It is Free and Open Source.</textarea
-                  >
+                <hr class="my-4" />
+                <div class="row">
+                  <div class="col-lg-12 text-right">
+                    <a
+                      (click)="edit(infoFullWorkshop?.nit)"
+                      class="btn btn-success"
+                      >Editar taller</a
+                    >
+                  </div>
                 </div>
               </div>
             </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid mt--7" *ngIf="userInfo?.role.role === 'ROOT'">
+    <div class="row" style="margin-top: 120px">
+      <div class="col-xl-12 order-xl-1">
+        <div class="card bg-secondary shadow">
+          <div class="card-header bg-white border-0">
+            <div class="row align-items-center">
+              <div class="col-8">
+                <h3 class="mb-0">
+                  Admin's / Clientes del taller ({{
+                    infoFullWorkshop?.users.length
+                  }})
+                </h3>
+              </div>
+            </div>
+          </div>
+          <div class="pl-lg-4">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="table-responsive">
+                  <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                      <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Rol</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let user of infoFullWorkshop?.users">
+                        <td>
+                          <a
+                            class="mb-0 text-sm"
+                            [routerLink]="[
+                              '/user-profile/',
+                              user.identification
+                            ]"
+                            >{{ user?.name | titlecase }}
+                            {{ user?.lastname | titlecase }}</a
+                          >
+                        </td>
+                        <td>
+                          <i
+                            *ngIf="user?.role.id === 2"
+                            class="fas fa-user-lock"
+                          ></i>
+                          <i
+                            *ngIf="user?.role.id === 3"
+                            class="fas fa-user-astronaut"
+                          ></i>
+                          {{
+                            user?.role.id === 2
+                              ? "Admin"
+                              : ("Cliente" | titlecase)
+                          }}
+                        </td>
+                        <td>
+                          <span class="badge badge-dot mr-4">
+                            <i
+                              [ngClass]="
+                                user.state ? 'bg-success' : 'bg-warning'
+                              "
+                            ></i>
+                            {{ user.state ? "Activo" : "Inactivo" }}
+                          </span>
+                        </td>
+                        <td>
+                          <i
+                            class="ni ni-fat-remove text-danger"
+                            style="cursor: pointer; font-size: 30px"
+                            (click)="delete(user.id)"
+                            data-toggle="tooltip"
+                            ngbTooltip="Eliminar"
+                          ></i>
+                        </td>
+                      </tr>
+                      <tr *ngIf="infoFullWorkshop?.users.length == 0">
+                        <th colspan="6" class="text-center">
+                          <div class="media-body">
+                            <span class="mb-0 text-sm">No hay usuarios</span>
+                          </div>
+                        </th>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ADMIN -->
+  <div class="container-fluid mt--7" *ngIf="userInfo?.role.role === 'ADMIN'">
+    <div class="row" style="margin-top: 120px">
+      <div class="col-xl-12 order-xl-1">
+        <div class="card bg-secondary shadow">
+          <div class="card-header bg-white border-0">
+            <div class="row align-items-center">
+              <div class="col-8">
+                <h3 class="mb-0">
+                  Usuarios del taller ({{ infoFullWorkshopUser?.length }})
+                </h3>
+              </div>
+            </div>
+          </div>
+          <div class="pl-lg-4">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="table-responsive">
+                  <table class="table align-items-center table-flush">
+                    <thead class="thead-light">
+                      <tr>
+                        <th scope="col">Identificación</th>
+                        <th scope="col">Nombre completo</th>
+                        <th scope="col">Correo</th>
+                        <th scope="col">Teléfono</th>
+                        <th scope="col">Ocupación</th>
+                        <th scope="col">Placa</th>
+                        <th scope="col">Licencias</th>
+                        <th scope="col">Estado</th>
+                        <th scope="col"></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let user of infoFullWorkshopUser">
+                        <td>{{ user?.identification }}</td>
+                        <td>
+                          <div class="media align-items-center">
+                            <a
+                              [routerLink]="[
+                                '/user-profile/',
+                                user.identification
+                              ]"
+                              class="avatar rounded-circle mr-3"
+                            >
+                              <img
+                                alt="{{ user.name }}"
+                                src="{{ user.avatar }}"
+                              />
+                            </a>
+                            <div class="media-body">
+                              <a
+                                class="mb-0 text-sm"
+                                [routerLink]="[
+                                  '/user-profile/',
+                                  user.identification
+                                ]"
+                                >{{ user?.name | titlecase }}
+                                {{ user?.lastname | titlecase }}</a
+                              >
+                            </div>
+                          </div>
+                        </td>
+                        <td>{{ user?.email }}</td>
+                        <td>{{ user?.phone }}</td>
+                        <td>{{ user?.occupation | titlecase }}</td>
+                        <td>
+                          <a
+                            class="mb-0 text-sm"
+                            *ngIf="user.car?.plate"
+                            (click)="openModalvehicle(user.car)"
+                            style="cursor: pointer"
+                            ><i class="fas fa-car"></i>
+                            {{ user.car?.plate | uppercase }}</a
+                          >
+                          <span *ngIf="user.car?.plate === null"
+                            >Sin asignar</span
+                          >
+                        </td>
+                        <td>
+                          <a
+                            class="mb-0 text-sm"
+                            *ngIf="user.licenses.length > 0"
+                            (click)="openModalLicense(user?.licenses)"
+                            style="cursor: pointer"
+                            data-toggle="tooltip"
+                            ngbTooltip="{{ user.licenses.length }} licencias"
+                            ><i class="fas fa-id-badge"></i> Ver licencias</a
+                          >
+                          <span *ngIf="user.licenses.length === 0"
+                            >Sin licencias</span
+                          >
+                        </td>
+                        <td>
+                          <span class="badge badge-dot mr-4">
+                            <i
+                              [ngClass]="
+                                user.state ? 'bg-success' : 'bg-warning'
+                              "
+                            ></i>
+                            {{ user.state ? "Activo" : "Inactivo" }}
+                          </span>
+                        </td>
+                        <td>
+                          <i
+                            class="ni ni-fat-remove text-danger"
+                            style="cursor: pointer; font-size: 30px"
+                            (click)="delete(user.id)"
+                            data-toggle="tooltip"
+                            ngbTooltip="Eliminar"
+                          ></i>
+                        </td>
+                      </tr>
+                      <tr *ngIf="infoFullWorkshopUser?.length == 0">
+                        <th colspan="6" class="text-center">
+                          <div class="media-body">
+                            <span class="mb-0 text-sm">No hay usuarios</span>
+                          </div>
+                        </th>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

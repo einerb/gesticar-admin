@@ -24,6 +24,7 @@
                   <th scope="col">Ciudad</th>
                   <th scope="col">Telefono</th>
                   <th scope="col">Creación</th>
+                  <th scope="col">Taller</th>
                   <th scope="col">Rol</th>
                   <th scope="col">Estado</th>
                 </tr>
@@ -51,7 +52,39 @@
                   <td>{{ item.city | titlecase }}</td>
                   <td>{{ item.phone }}</td>
                   <td>{{ item.createdAt }}</td>
-                  <td>{{ item.role  }}</td>
+                  <td>
+                    <a
+                      *ngIf="item.workshop?.name"
+                      class="mb-0 text-sm font-weight-bold"
+                      [routerLink]="['/workshop-profile/', item.workshop.nit]"
+                    >
+                      {{ item.workshop?.name }}</a
+                    >
+                    <span *ngIf="item.workshop === undefined"
+                      >No Requerido</span
+                    >
+                  </td>
+                  <td>
+                    <i
+                      *ngIf="item?.role === 'ROOT'"
+                      class="fas fa-user-secret"
+                    ></i>
+                    <i
+                      *ngIf="item?.role === 'USER'"
+                      class="fas fa-user-astronaut"
+                    ></i>
+                    <i
+                      *ngIf="item?.role === 'ADMIN'"
+                      class="fas fa-user-lock"
+                    ></i>
+                    {{
+                      item?.role === "ROOT"
+                        ? "Root"
+                        : item?.role === "ADMIN"
+                        ? "Admin"
+                        : ("Cliente" | titlecase)
+                    }}
+                  </td>
                   <td>
                     <span class="badge badge-dot mr-4">
                       <i

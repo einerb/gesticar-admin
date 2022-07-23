@@ -4,12 +4,15 @@ export class Workshop {
   id: number;
   nit?: string;
   name?: string;
+  initials: string;
   address?: string;
   phone?: string;
   capacity?: number;
   limit?: number;
   state?: boolean;
   users?: [User];
+  createdAt: string;
+  updatedAt: string;
 
   constructor(item?: Workshop) {
     this.id = item && item.id ? item.id : 0;
@@ -20,5 +23,7 @@ export class Workshop {
     this.capacity = item && item.capacity ? item.capacity : 0;
     this.limit = item && item.limit ? item.limit : 0;
     this.state = item && item.state ? item.state : false;
+    this.createdAt = item && item.createdAt ? item.createdAt : '';
+    this.updatedAt = item && item.updatedAt ? item.updatedAt : '';
   }
 }

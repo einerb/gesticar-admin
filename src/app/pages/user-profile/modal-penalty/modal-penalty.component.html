@@ -1,0 +1,47 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ title }}</h4>
+</div>
+<div class="modal-body">
+  <div class="table-responsive">
+    <table class="table align-items-center table-flush">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Número</th>
+          <th scope="col">Fecha</th>
+          <th scope="col">Descripción</th>
+          <th scope="col">Dirección</th>
+          <th scope="col">Estado</th>
+          <th scope="col">Secretaría</th>
+          <th scope="col">Fotodetección</th>
+          <th scope="col">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let penalty of data">
+          <th>{{ penalty?.number }}</th>
+          <td>{{ penalty?.date }}</td>
+          <td>{{ penalty?.description }}</td>
+          <td>{{ penalty?.address | titlecase }}</td>
+          <td>{{ penalty?.state | titlecase }}</td>
+          <td>{{ penalty?.secretary | titlecase }}</td>
+          <td>{{ penalty?.photodetection === "S" ? "Si" : "No" }}</td>
+          <td>$ {{ penalty?.total }}</td>
+        </tr>
+        <tr *ngIf="data.length === 0">
+          <th colspan="8" class="text-center">
+            <span class="mb-0 text-sm">No información de comparendos</span>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-outline-dark"
+    (click)="activeModal.close('Close click')"
+  >
+    Cerrar
+  </button>
+</div>

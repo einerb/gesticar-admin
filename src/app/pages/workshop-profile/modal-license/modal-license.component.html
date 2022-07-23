@@ -1,0 +1,52 @@
+<div class="modal-header">
+  <h4 class="modal-title">{{ title }}</h4>
+</div>
+<div class="modal-body">
+  <div class="table-responsive">
+    <table class="table align-items-center table-flush">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Categoría</th>
+          <th scope="col">Fecha de Expedición</th>
+          <th scope="col">Fecha de Vencimiento</th>
+          <th scope="col">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let license of data; let i = index">
+          <th>{{ i + 1 }}</th>
+          <td>{{ license?.category | uppercase }}</td>
+          <td>{{ license?.expeditionDate }}</td>
+          <td>{{ license?.dueDate }}</td>
+          <td>
+            <span class="badge badge-dot mr-4">
+              <i
+                [ngClass]="
+                  license.statusLicense === 'activo'
+                    ? 'bg-success'
+                    : 'bg-warning'
+                "
+              ></i>
+              {{ license.statusLicense === "activo" ? "Activa" : "Inactiva" }}
+            </span>
+          </td>
+        </tr>
+        <tr *ngIf="data.length === 0">
+          <th colspan="4" class="text-center">
+            <span class="mb-0 text-sm">No información de propietarios</span>
+          </th>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-outline-dark"
+    (click)="activeModal.close('Close click')"
+  >
+    Cerrar
+  </button>
+</div>

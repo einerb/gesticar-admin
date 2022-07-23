@@ -1,8 +1,7 @@
 import * as moment from "moment";
 import { ActivatedRoute } from "@angular/router";
 import { BlockUI, NgBlockUI } from "ng-block-ui";
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { ModalManager } from "ngb-modal";
+import { Component, OnInit } from "@angular/core";
 
 import { User } from "src/app/entities/user.entity";
 import {
@@ -11,7 +10,9 @@ import {
   UserService,
   VehicleService,
 } from "src/app/services";
-import { Car } from "src/app/entities/car.entity";
+import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
+import { ModalPenaltyComponent } from "./modal-penalty/modal-penalty.component";
+import { ModalOwnerComponent } from "./modal-owner/modal-owner.component";
 
 @Component({
   selector: "app-user-profile",
@@ -30,9 +31,6 @@ export class UserProfileComponent implements OnInit {
   public servicesCreated: number = 0;
   public createdAt: string;
   public allowEdit: boolean = false;
-  @ViewChild("infoPenaltyModal") infoPenaltyModal;
-  @ViewChild("infoOwnerModal") infoOwnerModal;
-  private modalRef;
 
   constructor(
     private readonly userService: UserService,
@@ -40,8 +38,12 @@ export class UserProfileComponent implements OnInit {
     private readonly vehicleService: VehicleService,
     private readonly globalService: GlobalService,
     private route: ActivatedRoute,
-    private modalService: ModalManager
+    config: NgbModalConfig,
+    private modalService: NgbModal
   ) {
+    config.backdrop = "static";
+    config.keyboard = false;
+
     this.blockUI.start();
   }
 
@@ -60,35 +62,21 @@ export class UserProfileComponent implements OnInit {
   }
 
   public openModalPenalty() {
-    this.modalRef = this.modalService.open(this.infoPenaltyModal, {
+    this.blockUI.start();
+    const modalRef = this.modalService.open(ModalPenaltyComponent, {
       size: "lg",
-      modalClass: "infoPenaltyModal",
-      hideCloseButton: false,
-      centered: false,
-      backdrop: true,
-      animation: true,
-      keyboard: false,
-      closeOnOutsideClick: false,
-      backdropClass: "modal-backdrop",
     });
+    modalRef.componentInstance.title = "Comparendos";
+    modalRef.componentInstance.data = this.infoPenalty;
+    this.blockUI.stop();
   }
 
   public openModalOwner() {
-    this.modalRef = this.modalService.open(this.infoOwnerModal, {
-      size: "md",
-      modalClass: "infoOwnerModal",
-      hideCloseButton: false,
-      centered: false,
-      backdrop: true,
-      animation: true,
-      keyboard: false,
-      closeOnOutsideClick: false,
-      backdropClass: "modal-backdrop",
-    });
-  }
-
-  public closeModal() {
-    this.modalService.close(this.modalRef);
+    this.blockUI.start();
+    const modalRef = this.modalService.open(ModalOwnerComponent);
+    modalRef.componentInstance.title = "Propietarios";
+    modalRef.componentInstance.data = this.infoOwner;
+    this.blockUI.stop();
   }
 
   private getServiceCount(stateService: string) {
@@ -156,6 +144,7 @@ export class UserProfileComponent implements OnInit {
   }
 
   private getUserInfo(identification: number) {
+    this.blockUI.start();
     this.userService.getById(identification).subscribe((res) => {
       this.blockUI.stop();
       res.data.forEach((element) => {

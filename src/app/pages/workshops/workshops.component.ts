@@ -1,10 +1,19 @@
-import { Component, OnInit } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from "@angular/core";
 import * as moment from "moment";
 import { BlockUI, NgBlockUI } from "ng-block-ui";
 import Swal from "sweetalert2";
 
 import { Workshop } from "src/app/entities/workshop.entity";
 import { WorkshopService } from "src/app/services/workshop.service";
+import { GlobalService, HelpService } from "src/app/services";
+import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
+import { ModalNewWorkshopComponent } from "./modal-new-workshop/modal-new-workshop.component";
 
 @Component({
   selector: "app-workshops",
@@ -17,49 +26,27 @@ export class WorkshopsComponent implements OnInit {
   public totalPages: number;
   public page: number = 1;
   public elementsPerPage: number;
-  public currentElements: number = 5;
+  public currentElements: number = 12;
   public disabledPrevious: boolean = true;
   public disabledNext: boolean = false;
 
-  constructor(private readonly workshopService: WorkshopService) {
+  @Output() openModal = new EventEmitter();
+  public opModal: boolean;
+
+  constructor(
+    private readonly workshopService: WorkshopService,
+    public readonly globalService: GlobalService,
+    config: NgbModalConfig,
+    private modalService: NgbModal
+  ) {
+    config.backdrop = "static";
+    config.keyboard = false;
+
     this.blockUI.start();
   }
 
   ngOnInit(): void {
     this.getAllWorkshop(this.page);
-  }
-
-  private getAllWorkshop(page: number) {
-    this.workshops = [];
-
-    let start = moment().add(-1, "years").format("YYYY-MM-DD");
-    let end = moment().add(1, "month").format("YYYY-MM-DD");
-
-    this.workshopService
-      .getAll(page, this.currentElements, start, end)
-      .subscribe((res) => {
-        this.blockUI.stop();
-        res.data.records.forEach((element) => {
-          let capacity = this.getCapacity(
-            element.users.length,
-            element.limit_users
-          );
-          this.workshops.push({
-            address: element.address,
-            id: element.id,
-            capacity: capacity,
-            limit: element.users.length,
-            name: element.name,
-            users: element.users,
-            nit: element.nit,
-            phone: element.phone,
-            state: element.state,
-          });
-        });
-
-        this.totalPages = res.data.totalPages;
-        this.elementsPerPage = res.data.elementsPerPage;
-      });
   }
 
   public delete(id: number) {
@@ -73,8 +60,8 @@ export class WorkshopsComponent implements OnInit {
 
     swalWithBootstrapButtons
       .fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
+        title: "¿Está usted seguro?",
+        text: "¡No podrás revertir esto!",
         icon: "warning",
         showCancelButton: true,
         confirmButtonText: "Eliminar!",
@@ -83,16 +70,17 @@ export class WorkshopsComponent implements OnInit {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          swalWithBootstrapButtons.fire(
-            "Eliminado!",
-            "Your file has been deleted.",
-            "success"
-          );
+          this.workshopService.delete(id).subscribe((res) => {
+            if (res.code > 1000) {
+              this.globalService.onSuccess(res.message);
+              this.getAllWorkshop(1);
+            } else {
+              this.globalService.onFailure(res.error);
+            }
+          });
         }
       });
   }
-
-  public edit(nit: string) {}
 
   public next() {
     this.disabledPrevious = false;
@@ -106,6 +94,13 @@ export class WorkshopsComponent implements OnInit {
     } else {
       this.disabledNext = false;
     }
+  }
+
+  public openModalNew() {
+    const modalRef = this.modalService.open(ModalNewWorkshopComponent, {
+      size: "lg",
+    });
+    modalRef.componentInstance.title = "Nuevo taller";
   }
 
   public previous() {
@@ -122,6 +117,47 @@ export class WorkshopsComponent implements OnInit {
     }
   }
 
+  private getAllWorkshop(page: number) {
+    this.workshops = [];
+
+    let start = moment().add(-1, "years").format("YYYY-MM-DD");
+    let end = moment().add(1, "month").format("YYYY-MM-DD");
+
+    this.workshopService
+      .getAll(page, this.currentElements, start, end)
+      .subscribe((res) => {
+        this.blockUI.stop();
+        if (res.code > 1000) {
+          res.data?.records.forEach((element) => {
+            let capacity = this.getCapacity(
+              element.users.length,
+              element.limit_users
+            );
+            let nameWorkshop = this.getName(element.name);
+            this.workshops.push({
+              initials: nameWorkshop,
+              address: element.address,
+              id: element.id,
+              capacity: Math.round(capacity),
+              limit: element.users.length,
+              name: element.name,
+              users: element.users,
+              nit: element.nit,
+              phone: element.phone,
+              state: element.state,
+              createdAt: element.createdAt,
+              updatedAt: element.updatedAt,
+            });
+          });
+
+          this.totalPages = res.data.totalPages;
+          this.elementsPerPage = res.data.elementsPerPage;
+        } else {
+          this.globalService.onFailure(res.error, res.code);
+        }
+      });
+  }
+
   private getCapacity(limit: number, capacity: number) {
     let valor;
     if (capacity > 0) {
@@ -131,5 +167,16 @@ export class WorkshopsComponent implements OnInit {
       valor = 0;
       return valor;
     }
+  }
+
+  private getName(name: string) {
+    let splitFormatted = name.split(" ");
+    let firstName = splitFormatted[0].charAt(0).toUpperCase();
+    let lastName =
+      splitFormatted.length > 1
+        ? splitFormatted[1].charAt(0).toUpperCase()
+        : "";
+
+    return firstName + lastName;
   }
 }
