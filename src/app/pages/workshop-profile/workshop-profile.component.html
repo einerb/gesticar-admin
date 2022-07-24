@@ -17,9 +17,29 @@
           <h1 class="display-2 text-white">
             {{ infoFullWorkshop?.name | titlecase }}
           </h1>
-          <a (click)="openModalNew()" class="btn btn-info">{{
-            userInfo?.role.role === "ROOT" ? "Asignar Admin" : "Agregar Cliente"
-          }}</a>
+          <button
+            *ngIf="userInfo?.role.role === 'ADMIN'"
+            (click)="openModalNew()"
+            [disabled]="!infoFullWorkshop?.state"
+            class="btn btn-info"
+          >
+            Agregar Cliente
+          </button>
+          <span
+            *ngIf="!infoFullWorkshop?.state && userInfo?.role.role === 'ADMIN'"
+            class="badge badge-default"
+            data-toggle="tooltip"
+            ngbTooltip="La función se encuentra BLOQUEADA porque el Taller está inactivo. Por favor comuniquese con el ROOT de la plataforma!"
+            >Función bloqueada <i class="fas fa-info-circle"></i
+          ></span>
+
+          <button
+            (click)="openModalNew()"
+            class="btn btn-info"
+            *ngIf="userInfo?.role.role === 'ROOT'"
+          >
+            Asignar Admin
+          </button>
         </div>
       </div>
     </div>
@@ -404,6 +424,7 @@
                         </td>
                         <td>
                           <i
+                            *ngIf="infoFullWorkshop?.state"
                             class="ni ni-fat-remove text-danger"
                             style="cursor: pointer; font-size: 30px"
                             (click)="delete(user.id)"

@@ -13,6 +13,7 @@ import {
 import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
 import { ModalPenaltyComponent } from "./modal-penalty/modal-penalty.component";
 import { ModalOwnerComponent } from "./modal-owner/modal-owner.component";
+import { ModalLicenseComponent } from "../workshop-profile/modal-license/modal-license.component";
 
 @Component({
   selector: "app-user-profile",
@@ -61,18 +62,39 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
+  public openModalLicense(licencias: []) {
+    this.blockUI.start();
+
+    const modalRef = this.modalService.open(ModalLicenseComponent, {
+      size: "lg",
+    });
+    modalRef.componentInstance.title = "Licencias";
+    modalRef.componentInstance.data = licencias;
+
+    this.blockUI.stop();
+  }
+
   public openModalPenalty() {
     this.blockUI.start();
+
+    this.getInfoPenalty("CC", this.infoFullUser.identification);
+
     const modalRef = this.modalService.open(ModalPenaltyComponent, {
       size: "lg",
     });
     modalRef.componentInstance.title = "Comparendos";
     modalRef.componentInstance.data = this.infoPenalty;
+
     this.blockUI.stop();
   }
 
   public openModalOwner() {
     this.blockUI.start();
+
+    if (this.infoFullUser.car !== null) {
+      this.getInfoOwner(this.infoFullUser.car);
+    }
+
     const modalRef = this.modalService.open(ModalOwnerComponent);
     modalRef.componentInstance.title = "Propietarios";
     modalRef.componentInstance.data = this.infoOwner;
@@ -156,11 +178,6 @@ export class UserProfileComponent implements OnInit {
           this.getServiceCount(service.state);
         });
       });
-
-      if (this.infoFullUser.car !== null) {
-        this.getInfoOwner(this.infoFullUser.car);
-      }
-      this.getInfoPenalty("CC", this.infoFullUser.identification);
     });
   }
 }
