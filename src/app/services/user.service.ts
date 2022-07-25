@@ -43,7 +43,7 @@ export class UserService {
     );
   }
 
-  public update(id: string, user: User) {
+  public update(id: number, user: User) {
     return this.globalService
       .put(Api.Endpoints.USER.BASE + `/${id}`, user)
       .pipe(

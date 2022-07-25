@@ -24,7 +24,7 @@
           <ng-container *ngIf="infoFullUser?.car !== null">
             <button
               class="btn btn-info"
-              [disabled]="!infoFullUser?.workshop.state"
+              [disabled]="!infoFullUser?.workshops.state"
             >
               Crear Servicio
             </button>
@@ -34,7 +34,7 @@
               class="btn btn-info"
               *ngIf="infoFullUser?.services.length === 0"
               [disabled]="
-                !infoFullUser?.workshop.state ||
+                !infoFullUser?.workshops.state ||
                 infoFullUser?.services.length === 0
               "
             >
@@ -44,7 +44,7 @@
           <ng-container *ngIf="infoFullUser?.car === null">
             <button
               class="btn btn-info"
-              [disabled]="!infoFullUser?.workshop.state"
+              [disabled]="!infoFullUser?.workshops.state"
               (click)="
                 openModalvehicle(null, false, infoFullUser?.identification)
               "
@@ -54,7 +54,7 @@
           </ng-container>
           <span
             *ngIf="
-              !infoFullUser?.workshop.state && userInfo?.role.role === 'ADMIN'
+              !infoFullUser?.workshops.state && userInfo?.role.role === 'ADMIN'
             "
             class="badge badge-default"
             data-toggle="tooltip"
@@ -114,7 +114,7 @@
                 {{ infoFullUser?.name | titlecase }}
                 {{ infoFullUser?.lastname | titlecase
                 }}<span class="font-weight-light"
-                  >, {{ age ? age : "Sin fecha" }}</span
+                  >, {{ age ? age + " años" : "Sin fecha" }}</span
                 >
               </h3>
               <div class="h5 font-weight-300">
@@ -181,7 +181,160 @@
             </div>
           </div>
           <div class="card-body">
-            <form>
+            <form [formGroup]="editForm" novalidate>
+              <div class="pl-lg-4">
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Nombres</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Nombres"
+                        formControlName="name"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="f.name.hasError('required')"
+                      >
+                        El nombre es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Apellidos</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Apellidos"
+                        formControlName="lastname"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="f.lastname.hasError('required')"
+                      >
+                        Los apellidos son requerido *
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Dirección</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Dirección"
+                        formControlName="address"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Ciudad</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        formControlName="city"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Ocupación</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Ocupación"
+                        formControlName="occupation"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label"
+                        >Fecha de nacimiento</label
+                      ><br />
+                      <div class="input-group">
+                        <input
+                          class="form-control"
+                          placeholder="yyyy-mm-dd"
+                          name="dp"
+                          [(ngModel)]="model"
+                          ngbDatepicker
+                          #d="ngbDatepicker"
+                          formControlName="birthdate"
+                          [maxDate]="maxDate"
+                          readonly
+                        />
+                        <button
+                          class="btn btn-outline-primary"
+                          (click)="d.toggle()"
+                          type="button"
+                        >
+                          <i class="fas fa-calendar-alt"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Teléfono</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Teléfono"
+                        formControlName="phone"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group" *ngIf="!allowEdit">
+                      <label class="form-control-label">Estado:</label><br />
+                      <label class="custom-toggle">
+                        <input
+                          type="checkbox"
+                          checked=""
+                          formControlName="state"
+                        />
+                        <span
+                          class="custom-toggle-slider rounded-circle"
+                        ></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" *ngIf="!infoFullUser?.state">
+                  <div class="alert alert-warning" role="alert">
+                    <span class="alert-inner--icon">
+                      <i class="fas fa-thumbs-down"></i
+                    ></span>
+                    <span class="alert-inner--text pl-2"
+                      ><strong>Cuidado!</strong> Al inactivar el usuario, éste
+                      no podrá ingresar en la plataforma!</span
+                    >
+                  </div>
+                </div>
+                <hr class="my-4" />
+                <div class="row">
+                  <div class="col-lg-12 text-right">
+                    <a
+                      (click)="edit(infoFullUser?.identification)"
+                      class="btn btn-success"
+                      >Editar usuario</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </form>
+            <!-- <form>
               <h6 class="heading-small text-muted mb-4">Información usuario</h6>
               <div class="pl-lg-4">
                 <div class="row">
@@ -245,7 +398,6 @@
                 </div>
               </div>
               <hr class="my-4" />
-              <!-- Address -->
               <h6 class="heading-small text-muted mb-4">
                 Información Automotor
               </h6>
@@ -315,7 +467,7 @@
                   </div>
                 </div>
               </div>
-            </form>
+            </form> -->
           </div>
         </div>
       </div>

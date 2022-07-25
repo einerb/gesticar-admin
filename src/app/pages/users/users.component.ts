@@ -89,7 +89,7 @@ export class UsersComponent implements OnInit {
               phone: element.phone,
               email: element.email,
               state: element.state,
-              workshop: element?.workshops[0],
+              workshops: element?.workshops[0],
               createdAt: moment(element.createdAt).format("LLL"),
             });
           });

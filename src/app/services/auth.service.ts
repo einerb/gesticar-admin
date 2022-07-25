@@ -34,7 +34,10 @@ export class AuthService {
       .pipe(
         map((res) => {
           this.userInfo = this.getDecodedAccessToken(res.data.accessToken);
-          if (this.userInfo.role.role === 'USER') {
+          if (
+            this.userInfo.role.role === "USER" ||
+            this.userInfo.state === false
+          ) {
             Swal.fire({
               title: `Fallo de operación`,
               text: "Usuario permitido solo para aplicación móvil",

@@ -121,12 +121,15 @@
                 #d="ngbDatepicker"
                 formControlName="birthdate"
                 readonly
+                [maxDate]="maxDate"
               />
               <button
-                class="btn btn-outline-secondary calendar"
+                class="btn btn-outline-primary"
                 (click)="d.toggle()"
                 type="button"
-              ></button>
+              >
+                <i class="fas fa-calendar-alt"></i>
+              </button>
             </div>
           </div>
         </div>

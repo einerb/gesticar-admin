@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal, NgbDateStruct } from "@ng-bootstrap/ng-bootstrap";
+import * as moment from "moment";
 import { GlobalService, UserService } from "src/app/services";
 
 @Component({
@@ -14,6 +15,11 @@ export class ModalAssignAdminComponent implements OnInit {
   @Input() admin;
   public addForm: FormGroup;
   public model: NgbDateStruct;
+  public maxDate = {
+    year: parseInt(moment(new Date()).add(-18, "years").format("YYYY")),
+    month: parseInt(moment(new Date().getMonth()).format("MM")),
+    day: parseInt(moment(new Date().getDay()).format("DD")),
+  };
 
   constructor(
     private readonly userService: UserService,

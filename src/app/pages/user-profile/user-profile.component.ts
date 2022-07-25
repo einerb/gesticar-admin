@@ -2,6 +2,7 @@ import * as moment from "moment";
 import { ActivatedRoute } from "@angular/router";
 import { BlockUI, NgBlockUI } from "ng-block-ui";
 import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 import { User } from "src/app/entities/user.entity";
 import {
@@ -10,7 +11,11 @@ import {
   UserService,
   VehicleService,
 } from "src/app/services";
-import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
+import {
+  NgbDateStruct,
+  NgbModal,
+  NgbModalConfig,
+} from "@ng-bootstrap/ng-bootstrap";
 import { ModalPenaltyComponent } from "./modal-penalty/modal-penalty.component";
 import { ModalOwnerComponent } from "./modal-owner/modal-owner.component";
 import { ModalLicenseComponent } from "../workshop-profile/modal-license/modal-license.component";
@@ -35,6 +40,13 @@ export class UserProfileComponent implements OnInit {
   public createdAt: string;
   public allowEdit: boolean = false;
   public userInfo: User;
+  public editForm: FormGroup;
+  public model: NgbDateStruct;
+  public maxDate = {
+    year: parseInt(moment(new Date()).add(-18, "years").format("YYYY")),
+    month: parseInt(moment(new Date().getMonth()).format("MM")),
+    day: parseInt(moment(new Date().getDay()).format("DD")),
+  };
 
   constructor(
     private readonly userService: UserService,
@@ -43,12 +55,15 @@ export class UserProfileComponent implements OnInit {
     private readonly globalService: GlobalService,
     private route: ActivatedRoute,
     config: NgbModalConfig,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private formBuilder: FormBuilder
   ) {
     config.backdrop = "static";
     config.keyboard = false;
 
     this.blockUI.start();
+
+    this.createForm();
   }
 
   ngOnInit() {
@@ -62,6 +77,47 @@ export class UserProfileComponent implements OnInit {
       this.userInfo.identification.toString() === id
         ? (this.allowEdit = true)
         : (this.allowEdit = false);
+    });
+  }
+
+  get f() {
+    return this.editForm.controls;
+  }
+
+  public edit(identification: number) {
+    if (this.editForm.invalid) {
+      return;
+    }
+
+    let birthdateFormatted =
+      this.editForm.get("birthdate").value?.year +
+      "-" +
+      this.editForm.get("birthdate").value?.month +
+      "-" +
+      this.editForm.get("birthdate").value?.day;
+
+    const data: any = {
+      name: this.editForm.get("name").value,
+      lastname: this.editForm.get("lastname").value,
+      occupation: this.editForm.get("occupation").value,
+      city: this.editForm.get("city").value,
+      address: this.editForm.get("address").value,
+      birthdate: birthdateFormatted,
+      phone: this.editForm.get("phone").value,
+      state: this.editForm.get("state").value,
+      gender: this.infoFullUser.gender,
+      workshopId: this.infoFullUser.workshops
+        ? this.infoFullUser.workshops.id
+        : null,
+    };
+
+    this.userService.update(identification, data).subscribe((res) => {
+      if (res.code > 1000) {
+        this.globalService.onSuccess(res.message);
+        this.getUserInfo(identification);
+      } else {
+        this.globalService.onFailure(res.error);
+      }
     });
   }
 
@@ -119,6 +175,19 @@ export class UserProfileComponent implements OnInit {
       id: id,
     };
     modalRef.componentInstance.data = data;
+  }
+
+  private createForm() {
+    this.editForm = this.formBuilder.group({
+      name: ["", [Validators.required]],
+      lastname: ["", [Validators.required]],
+      occupation: [""],
+      city: ["Barranquilla"],
+      address: [""],
+      birthdate: [""],
+      phone: [""],
+      state: [false, [Validators.required]],
+    });
   }
 
   private getServiceCount(stateService: string) {
@@ -191,15 +260,33 @@ export class UserProfileComponent implements OnInit {
       this.blockUI.stop();
 
       this.infoFullUser = res.data;
+      this.patchValue(this.infoFullUser);
       this.getRole(res.data.role.role);
       this.getAge(res.data.birthdate);
       this.getCreatedAt(res.data.createdAt);
       res.data.services.forEach((service) => {
         this.getServiceCount(service.state);
       });
-      res.data.workshops.forEach((element) => {
-        this.infoFullUser.workshop = element;
-      });
+
+      this.infoFullUser.workshops = res.data.workshops[0];
+    });
+  }
+
+  private patchValue(data) {
+    let birthdate = data?.birthdate.split("-");
+
+    this.editForm.patchValue({
+      identification: data?.identification,
+      name: data?.name,
+      lastname: data?.lastname,
+      occupation: data?.occupation,
+      city: data?.city,
+      address: data?.address,
+      birthdate: this.model,
+      phone: data?.phone,
+      email: data?.email,
+      password: data?.password,
+      state: data?.state,
     });
   }
 }

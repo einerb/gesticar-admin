@@ -19,7 +19,7 @@ export class User {
   state?: boolean;
   createdAt?: string;
   car?: [Car];
-  workshop?: Workshop;
+  public workshops?: Workshop;
   services?: string[];
 
   constructor(item?: User) {
