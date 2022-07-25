@@ -5,7 +5,7 @@ import { BehaviorSubject } from "rxjs";
   providedIn: "root",
 })
 export class HelpService {
-  public modal$ = new EventEmitter<boolean>();
+  public modal$ = new EventEmitter<boolean>(false);
   
   constructor() {}
 

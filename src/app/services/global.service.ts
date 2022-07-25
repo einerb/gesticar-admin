@@ -37,6 +37,7 @@ export class GlobalService {
         text: error.error?.message[0],
         icon: "error",
         confirmButtonText: "Ok",
+        allowOutsideClick: false,
       });
     }
 
@@ -130,6 +131,7 @@ export class GlobalService {
         text: err,
         icon: "error",
         confirmButtonText: "Ok",
+        allowOutsideClick: false,
       }).then((result) => {
         if (result.isConfirmed) {
           this.router.navigateByUrl("/dashboard");
@@ -141,6 +143,7 @@ export class GlobalService {
         text: err,
         icon: "error",
         confirmButtonText: "Ok",
+        allowOutsideClick: false,
       });
     }
   }
@@ -151,6 +154,7 @@ export class GlobalService {
       text: msg,
       icon: "success",
       confirmButtonText: "Ok",
+      allowOutsideClick: false,
     });
   }
 }

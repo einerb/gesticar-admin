@@ -21,7 +21,46 @@
               infoFullUser?.name | titlecase
             }}</ng-container>
           </h1>
-          <button class="btn btn-info">Asociar vehículo</button>
+          <ng-container *ngIf="infoFullUser?.car !== null">
+            <button
+              class="btn btn-info"
+              [disabled]="!infoFullUser?.workshop.state"
+            >
+              Crear Servicio
+            </button>
+          </ng-container>
+          <ng-container *ngIf="infoFullUser?.car !== null">
+            <button
+              class="btn btn-info"
+              *ngIf="infoFullUser?.services.length === 0"
+              [disabled]="
+                !infoFullUser?.workshop.state ||
+                infoFullUser?.services.length === 0
+              "
+            >
+              Ver Servicios
+            </button>
+          </ng-container>
+          <ng-container *ngIf="infoFullUser?.car === null">
+            <button
+              class="btn btn-info"
+              [disabled]="!infoFullUser?.workshop.state"
+              (click)="
+                openModalvehicle(null, false, infoFullUser?.identification)
+              "
+            >
+              Asociar Vehículo
+            </button>
+          </ng-container>
+          <span
+            *ngIf="
+              !infoFullUser?.workshop.state && userInfo?.role.role === 'ADMIN'
+            "
+            class="badge badge-default"
+            data-toggle="tooltip"
+            ngbTooltip="La función se encuentra BLOQUEADA porque el Taller está inactivo. Por favor comuniquese con el ROOT de la plataforma!"
+            >Función bloqueada <i class="fas fa-info-circle"></i
+          ></span>
         </div>
       </div>
     </div>
@@ -74,7 +113,9 @@
               <h3>
                 {{ infoFullUser?.name | titlecase }}
                 {{ infoFullUser?.lastname | titlecase
-                }}<span class="font-weight-light">, {{ age }}</span>
+                }}<span class="font-weight-light"
+                  >, {{ age ? age : "Sin fecha" }}</span
+                >
               </h3>
               <div class="h5 font-weight-300">
                 <i class="ni location_pin mr-2"></i>{{ infoFullUser?.city }},
@@ -109,7 +150,15 @@
               </div>
               <div *ngIf="infoFullUser?.role.role === 'USER'">
                 Información
-                <a href="javascript:void(0)" (click)="openModalLicense(infoFullUser?.licenses)"
+                <a
+                  href="javascript:void(0)"
+                  (click)="
+                    openModalLicense(
+                      infoFullUser?.licenses,
+                      true,
+                      infoFullUser?.identification
+                    )
+                  "
                   >Licencias</a
                 >
               </div>

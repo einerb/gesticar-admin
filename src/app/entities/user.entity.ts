@@ -19,7 +19,8 @@ export class User {
   state?: boolean;
   createdAt?: string;
   car?: [Car];
-  workshop?: Workshop
+  workshop?: Workshop;
+  services?: string[];
 
   constructor(item?: User) {
     this.id = item && item.id ? item.id : 0;

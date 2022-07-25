@@ -7,7 +7,6 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ["./modal-license.component.scss"],
 })
 export class ModalLicenseComponent implements OnInit {
-  @Input() title;
   @Input() data;
 
   constructor(public activeModal: NgbActiveModal) {}

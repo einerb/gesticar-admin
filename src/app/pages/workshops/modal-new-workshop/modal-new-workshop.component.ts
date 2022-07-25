@@ -2,10 +2,19 @@ import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import Swal from "sweetalert2";
 import { Router } from "@angular/router";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import {
+  NgbActiveModal,
+  NgbModal,
+  NgbModalConfig,
+} from "@ng-bootstrap/ng-bootstrap";
 
-import { GlobalService, HelpService } from "src/app/services";
+import { AuthService, GlobalService, HelpService } from "src/app/services";
 import { WorkshopService } from "src/app/services/workshop.service";
+import { User } from "src/app/entities/user.entity";
+import { ModalLicenseComponent } from "../../workshop-profile/modal-license/modal-license.component";
+import { ModalVehicleComponent } from "../../workshop-profile/modal-vehicle/modal-vehicle.component";
+import { ModalAssignAdminComponent } from "../../workshop-profile/modal-assign-admin/modal-assign-admin.component";
+import { Car } from "src/app/entities/car.entity";
 
 @Component({
   selector: "app-modal-new-workshop",
@@ -15,19 +24,30 @@ import { WorkshopService } from "src/app/services/workshop.service";
 export class ModalNewWorkshopComponent implements OnInit {
   @Input() title;
   public addForm: FormGroup;
+  public userInfo: User;
+  public workshopId: number;
 
   constructor(
     private readonly workshopService: WorkshopService,
+    private readonly authService: AuthService,
     public readonly globalService: GlobalService,
     private readonly helpService: HelpService,
     public activeModal: NgbActiveModal,
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    config: NgbModalConfig,
+    private modalService: NgbModal
   ) {
+    config.backdrop = "static";
+    config.keyboard = false;
+
     this.createForm();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    const token: any = this.globalService.getToken();
+    this.userInfo = this.authService.getDecodedAccessToken(token);
+  }
 
   get f() {
     return this.addForm.controls;
@@ -41,19 +61,15 @@ export class ModalNewWorkshopComponent implements OnInit {
     this.workshopService.create(this.addForm.value).subscribe(
       (res) => {
         if (res.code > 1000) {
-          this.activeModal.close();
+          (this.workshopId = res.data.workshop.nit), this.activeModal.close();
           Swal.fire({
             title: `Operación exitosa`,
             text: res.message,
             icon: "success",
             confirmButtonText: "Ok",
+            allowOutsideClick: false,
           }).then((result) => {
             if (result.isConfirmed) {
-              this.router.navigate([
-                "/workshop-profile",
-                res.data.workshop.nit,
-              ]);
-
               Swal.fire({
                 title: "Pasos iniciales",
                 text: "Asigne administradores al nuevo taller. Desea realizar esta operación?",
@@ -61,11 +77,12 @@ export class ModalNewWorkshopComponent implements OnInit {
                 showCancelButton: true,
                 confirmButtonText: "Si!",
                 cancelButtonText: "No, después!",
+                allowOutsideClick: false,
               }).then((resultIn) => {
                 if (resultIn.isConfirmed) {
-                  this.helpService.modal$.emit(true);
+                  this.openModalNew(res.data.workshop.id);
                 } else {
-                  this.helpService.modal$.emit(false);
+                  this.router.navigate(["/workshop-profile", this.workshopId]);
                 }
               });
             }
@@ -87,5 +104,88 @@ export class ModalNewWorkshopComponent implements OnInit {
       phone: ["", [Validators.required]],
       state: [true, [Validators.required]],
     });
+  }
+
+  private openModalNew(id: number) {
+    const modalRef = this.modalService.open(ModalAssignAdminComponent, {
+      size: "lg",
+    });
+    modalRef.componentInstance.title =
+      this.userInfo.role.role === "ADMIN" ? "Crear Cliente" : "Asignar Admin";
+    modalRef.componentInstance.data = id;
+    modalRef.componentInstance.admin = this.userInfo;
+
+    modalRef.result.then((result) => {
+      if (result == "success") {
+        if (this.userInfo.role.role === "ADMIN") {
+          Swal.fire({
+            title: "Pasos iniciales",
+            text: "1. Asigne el vehículo al nuevo cliente agregado al taller. Desea realizar esta operación?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Si!",
+            cancelButtonText: "No, después!",
+            allowOutsideClick: false,
+          }).then((resultIn) => {
+            if (resultIn.isConfirmed) {
+              this.openModalvehicle(null, false);
+            } else {
+              this.router.navigate(["/workshop-profile", this.workshopId]);
+            }
+          });
+        } else {
+          this.router.navigate(["/workshop-profile", this.workshopId]);
+        }
+      }
+    });
+  }
+
+  public openModalvehicle(vehicle?: Car, isExist?: boolean, id?: number) {
+    const modalRef = this.modalService.open(ModalVehicleComponent, {
+      size: "lg",
+    });
+    const data = {
+      title: isExist
+        ? `Información general del Vehículo ${vehicle.plate.toUpperCase()}`
+        : `Crear Vehículo`,
+      vehicle: vehicle,
+      isExist: isExist,
+      id: id,
+    };
+    modalRef.componentInstance.data = data;
+
+    modalRef.result.then((result) => {
+      if (result == "success") {
+        Swal.fire({
+          title: "Pasos iniciales",
+          text: "2. Agregue las licencias respectivas al propietario del nuevo vehículo creado. Desea realizar esta operación?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Si!",
+          cancelButtonText: "No, después!",
+          allowOutsideClick: false,
+        }).then((resultIn) => {
+          if (resultIn.isConfirmed) {
+            this.openModalLicense(null, false, 123);
+          } else {
+            this.router.navigate(["/workshop-profile", this.workshopId]);
+          }
+        });
+      }
+    });
+  }
+
+  public openModalLicense(licencias: [], isExist?: boolean, id?: number) {
+    const modalRef = this.modalService.open(ModalLicenseComponent, {
+      size: "lg",
+    });
+
+    const data = {
+      title: isExist ? "Licencias" : "Agregar licencia",
+      license: licencias,
+      isExist: isExist,
+      id: id,
+    };
+    modalRef.componentInstance.data = data;
   }
 }

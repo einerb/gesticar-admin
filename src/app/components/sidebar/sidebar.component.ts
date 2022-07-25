@@ -26,13 +26,20 @@ export const ROUTES: RouteInfo[] = [
   },
   {
     id: 3,
+    path: "/services",
+    title: "Servicios",
+    icon: "ni ni-delivery-fast text-yellow",
+    class: "",
+  },
+  {
+    id: 4,
     path: "/workshops",
     title: "Talleres",
     icon: "ni-bullet-list-67 text-red",
     class: "",
   },
   {
-    id: 4,
+    id: 5,
     path: "/users",
     title: "Usuarios",
     icon: "ni ni-single-02 text-yellow",
@@ -61,11 +68,14 @@ export class SidebarComponent implements OnInit {
     this.userInfo = this.authService.getDecodedAccessToken(token);
 
     if (this.userInfo.role.role === "ADMIN") {
-      this.menuItems = ROUTES.filter((menuItem) => menuItem.id <= 2);
+      this.menuItems = ROUTES.filter((menuItem) => menuItem.id <= 3);
       this.menuItems[1].path = `/workshop-profile/${this.userInfo.workshops[0]?.nit}`;
+      this.menuItems[2].path = `/workshop-profile/${this.userInfo.workshops[0]?.nit}/services`;
     }
     if (this.userInfo.role.role === "ROOT") {
-      this.menuItems = ROUTES.filter((menuItem) => menuItem.id !== 2);
+      this.menuItems = ROUTES.filter(
+        (menuItem) => menuItem.id !== 2 && menuItem.id !== 3
+      );
     }
 
     this.router.events.subscribe((event) => {

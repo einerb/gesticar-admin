@@ -14,6 +14,8 @@ import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
 import { ModalPenaltyComponent } from "./modal-penalty/modal-penalty.component";
 import { ModalOwnerComponent } from "./modal-owner/modal-owner.component";
 import { ModalLicenseComponent } from "../workshop-profile/modal-license/modal-license.component";
+import { ModalVehicleComponent } from "../workshop-profile/modal-vehicle/modal-vehicle.component";
+import { Car } from "src/app/entities/car.entity";
 
 @Component({
   selector: "app-user-profile",
@@ -32,6 +34,7 @@ export class UserProfileComponent implements OnInit {
   public servicesCreated: number = 0;
   public createdAt: string;
   public allowEdit: boolean = false;
+  public userInfo: User;
 
   constructor(
     private readonly userService: UserService,
@@ -50,28 +53,30 @@ export class UserProfileComponent implements OnInit {
 
   ngOnInit() {
     const token: any = this.globalService.getToken();
-    let userInfo = this.authService.getDecodedAccessToken(token);
+    this.userInfo = this.authService.getDecodedAccessToken(token);
 
     this.route.params.subscribe((params) => {
       let id = params["id"];
       this.getUserInfo(id);
 
-      userInfo.identification.toString() === id
+      this.userInfo.identification.toString() === id
         ? (this.allowEdit = true)
         : (this.allowEdit = false);
     });
   }
 
-  public openModalLicense(licencias: []) {
-    this.blockUI.start();
-
+  public openModalLicense(licencias: [], isExist?: boolean, id?: number) {
     const modalRef = this.modalService.open(ModalLicenseComponent, {
       size: "lg",
     });
-    modalRef.componentInstance.title = "Licencias";
-    modalRef.componentInstance.data = licencias;
 
-    this.blockUI.stop();
+    const data = {
+      title: isExist ? "Licencias" : "Agregar licencia",
+      license: licencias,
+      isExist: isExist,
+      id: id,
+    };
+    modalRef.componentInstance.data = data;
   }
 
   public openModalPenalty() {
@@ -99,6 +104,21 @@ export class UserProfileComponent implements OnInit {
     modalRef.componentInstance.title = "Propietarios";
     modalRef.componentInstance.data = this.infoOwner;
     this.blockUI.stop();
+  }
+
+  public openModalvehicle(vehicle?: Car, isExist?: boolean, id?: number) {
+    const modalRef = this.modalService.open(ModalVehicleComponent, {
+      size: "lg",
+    });
+    const data = {
+      title: isExist
+        ? `Información general del Vehículo ${vehicle.plate.toUpperCase()}`
+        : `Crear Vehículo`,
+      vehicle: vehicle,
+      isExist: isExist,
+      id: id,
+    };
+    modalRef.componentInstance.data = data;
   }
 
   private getServiceCount(stateService: string) {
@@ -169,14 +189,16 @@ export class UserProfileComponent implements OnInit {
     this.blockUI.start();
     this.userService.getById(identification).subscribe((res) => {
       this.blockUI.stop();
-      res.data.forEach((element) => {
-        this.infoFullUser = element;
-        this.getRole(element.role.role);
-        this.getAge(element.birthdate);
-        this.getCreatedAt(element.createdAt);
-        element.services.forEach((service) => {
-          this.getServiceCount(service.state);
-        });
+
+      this.infoFullUser = res.data;
+      this.getRole(res.data.role.role);
+      this.getAge(res.data.birthdate);
+      this.getCreatedAt(res.data.createdAt);
+      res.data.services.forEach((service) => {
+        this.getServiceCount(service.state);
+      });
+      res.data.workshops.forEach((element) => {
+        this.infoFullUser.workshop = element;
       });
     });
   }

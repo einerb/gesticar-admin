@@ -40,6 +40,7 @@ export class AuthService {
               text: "Usuario permitido solo para aplicación móvil",
               icon: "error",
               confirmButtonText: "Ok",
+              allowOutsideClick: false,
             });
           } else {
             localStorage.setItem("accessToken", res.data["accessToken"]);

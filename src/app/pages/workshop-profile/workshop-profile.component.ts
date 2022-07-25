@@ -1,6 +1,6 @@
 import { ActivatedRoute } from "@angular/router";
 import { BlockUI, NgBlockUI } from "ng-block-ui";
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import * as moment from "moment-timezone";
 import Swal from "sweetalert2";
 import { NgbModal, NgbModalConfig } from "@ng-bootstrap/ng-bootstrap";
@@ -35,6 +35,7 @@ export class WorkshopProfileComponent implements OnInit {
   public editForm: FormGroup;
   public nit: string;
   public userInfo: User;
+  public opMd = false;
 
   constructor(
     private readonly workshopService: WorkshopService,
@@ -61,12 +62,6 @@ export class WorkshopProfileComponent implements OnInit {
     this.route.params.subscribe((params) => {
       this.nit = params["id"];
       this.getWokshopInfo(this.nit);
-    });
-
-    this.helpService.modal$.subscribe((md) => {
-      if (md) {
-        this.openModalNew();
-      }
     });
   }
 
@@ -130,30 +125,79 @@ export class WorkshopProfileComponent implements OnInit {
     const modalRef = this.modalService.open(ModalAssignAdminComponent, {
       size: "lg",
     });
-    modalRef.componentInstance.title = "Asignar Admin";
+    modalRef.componentInstance.title =
+      this.userInfo.role.role === "ADMIN" ? "Crear Cliente" : "Asignar Admin";
     modalRef.componentInstance.data = this.infoFullWorkshop.id;
+    modalRef.componentInstance.admin = this.userInfo;
 
     modalRef.result.then((result) => {
       if (result == "success") {
         this.getWokshopInfo(this.nit);
+
+        if (this.userInfo.role.role === "ADMIN") {
+          Swal.fire({
+            title: "Pasos iniciales",
+            text: "1. Asigne el vehículo al nuevo cliente agregado al taller. Desea realizar esta operación?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Si!",
+            cancelButtonText: "No, después!",
+            allowOutsideClick: false,
+          }).then((resultIn) => {
+            if (resultIn.isConfirmed) {
+              this.openModalvehicle(null, false);
+            }
+          });
+        }
       }
     });
   }
 
-  public openModalLicense(licencias: []) {
+  public openModalLicense(licencias: [], isExist?: boolean, id?: number) {
     const modalRef = this.modalService.open(ModalLicenseComponent, {
       size: "lg",
     });
-    modalRef.componentInstance.title = "Licencias";
-    modalRef.componentInstance.data = licencias;
+
+    const data = {
+      title: isExist ? "Licencias" : "Agregar licencia",
+      license: licencias,
+      isExist: isExist,
+      id: id,
+    };
+    modalRef.componentInstance.data = data;
   }
 
-  public openModalvehicle(vehicle: Car) {
+  public openModalvehicle(vehicle?: Car, isExist?: boolean, id?: number) {
     const modalRef = this.modalService.open(ModalVehicleComponent, {
       size: "lg",
     });
-    modalRef.componentInstance.title = `Información general del Vehículo ${vehicle.plate.toUpperCase()}`;
-    modalRef.componentInstance.data = vehicle;
+    const data = {
+      title: isExist
+        ? `Información general del Vehículo ${vehicle.plate.toUpperCase()}`
+        : `Crear Vehículo`,
+      vehicle: vehicle,
+      isExist: isExist,
+      id: id,
+    };
+    modalRef.componentInstance.data = data;
+
+    modalRef.result.then((result) => {
+      if (result == "success") {
+        Swal.fire({
+          title: "Pasos iniciales",
+          text: "2. Agregue las licencias respectivas al propietario del nuevo vehículo creado. Desea realizar esta operación?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Si!",
+          cancelButtonText: "No, después!",
+          allowOutsideClick: false,
+        }).then((resultIn) => {
+          if (resultIn.isConfirmed) {
+            this.openModalLicense(null, false, 123);
+          }
+        });
+      }
+    });
   }
 
   private createForm() {
@@ -176,14 +220,20 @@ export class WorkshopProfileComponent implements OnInit {
   }
 
   private getWokshopInfo(nit: any) {
+    this.infoFullWorkshopUserAdmin = [];
+    this.infoFullWorkshopUser = [];
+
     this.workshopService.getByNit(nit).subscribe((res) => {
       this.blockUI.stop();
       this.infoFullWorkshop = res.data;
-      res.data?.users.forEach((element) => {
+      res.data?.users.filter((element) => {
         if (element.role.role === "USER") {
           this.infoFullWorkshopUser.push(element);
         }
+
+        this.infoFullWorkshopUserAdmin.push(element);
       });
+
       this.patchValue(this.infoFullWorkshop);
       this.getCreatedAt(this.infoFullWorkshop.createdAt);
       this.getUpdatedAt(this.infoFullWorkshop.updatedAt);
@@ -192,12 +242,12 @@ export class WorkshopProfileComponent implements OnInit {
 
   private patchValue(data) {
     this.editForm.patchValue({
-      name: data.name,
-      address: data.address,
-      limit_users: data.limit_users,
-      nit: data.nit,
-      phone: data.phone,
-      state: data.state,
+      name: data?.name,
+      address: data?.address,
+      limit_users: data?.limit_users,
+      nit: data?.nit,
+      phone: data?.phone,
+      state: data?.state,
     });
   }
 }

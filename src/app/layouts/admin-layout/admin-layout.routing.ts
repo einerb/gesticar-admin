@@ -10,6 +10,8 @@ import { UsersComponent } from "src/app/pages/users/users.component";
 import { AuthGuard } from "src/app/services/guards/auth.guard";
 import { WorkshopProfileComponent } from "src/app/pages/workshop-profile/workshop-profile.component";
 import { SettingsComponent } from "src/app/pages/settings/settings.component";
+import { ServicesComponent } from "src/app/pages/services/services.component";
+import { ServicesDetailsComponent } from "src/app/pages/services-details/services-details.component";
 
 export const AdminLayoutRoutes: Routes = [
   {
@@ -38,7 +40,10 @@ export const AdminLayoutRoutes: Routes = [
     component: SettingsComponent,
     canActivate: [AuthGuard],
   },
-  { path: "tables", component: TablesComponent },
-  { path: "icons", component: IconsComponent },
-  { path: "maps", component: MapsComponent },
+  { path: "user-profile/:id/services", component: ServicesComponent },
+  { path: "workshop-profile/:id/services", component: ServicesComponent },
+  {
+    path: "user-profile/:id/services/:id",
+    component: ServicesDetailsComponent,
+  },
 ];

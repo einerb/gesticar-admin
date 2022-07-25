@@ -11,8 +11,6 @@ import { AppRoutingModule } from "./app.routing";
 import { AuthInterceptorService } from "./services/interceptor/auth-interceptor.service";
 import { AuthLayoutComponent } from "./layouts/auth-layout/auth-layout.component";
 import { ComponentsModule } from "./components/components.module";
-import { ModalLicenseComponent } from './pages/workshop-profile/modal-license/modal-license.component';
-import { ModalVehicleComponent } from './pages/workshop-profile/modal-vehicle/modal-vehicle.component';
 
 @NgModule({
   imports: [
@@ -24,7 +22,7 @@ import { ModalVehicleComponent } from './pages/workshop-profile/modal-vehicle/mo
     RouterModule,
     AppRoutingModule,
   ],
-  declarations: [AppComponent, AdminLayoutComponent, AuthLayoutComponent, ModalLicenseComponent, ModalVehicleComponent],
+  declarations: [AppComponent, AdminLayoutComponent, AuthLayoutComponent],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

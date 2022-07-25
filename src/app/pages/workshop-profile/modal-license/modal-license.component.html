@@ -1,5 +1,5 @@
 <div class="modal-header">
-  <h4 class="modal-title">{{ title }}</h4>
+  <h4 class="modal-title">{{ data.title }}</h4>
 </div>
 <div class="modal-body">
   <div class="table-responsive">
@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let license of data; let i = index">
+        <tr *ngFor="let license of data?.license; let i = index">
           <th>{{ i + 1 }}</th>
           <td>{{ license?.category | uppercase }}</td>
           <td>{{ license?.expeditionDate }}</td>
@@ -32,7 +32,7 @@
             </span>
           </td>
         </tr>
-        <tr *ngIf="data.length === 0">
+        <tr *ngIf="data.license?.length === 0">
           <th colspan="5" class="text-center">
             <span class="mb-0 text-sm">No información de licencias</span>
           </th>

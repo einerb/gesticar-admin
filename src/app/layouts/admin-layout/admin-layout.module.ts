@@ -21,6 +21,11 @@ import { ModalAssignAdminComponent } from "src/app/pages/workshop-profile/modal-
 import { ModalOwnerComponent } from "src/app/pages/user-profile/modal-owner/modal-owner.component";
 import { ModalPenaltyComponent } from "src/app/pages/user-profile/modal-penalty/modal-penalty.component";
 import { ModalNewWorkshopComponent } from "src/app/pages/workshops/modal-new-workshop/modal-new-workshop.component";
+import { ServicesDetailsComponent } from "src/app/pages/services-details/services-details.component";
+import { ServicesComponent } from "src/app/pages/services/services.component";
+import { ModalNewServiceComponent } from "src/app/pages/user-profile/modal-new-service/modal-new-service.component";
+import { ModalVehicleComponent } from "src/app/pages/workshop-profile/modal-vehicle/modal-vehicle.component";
+import { ModalLicenseComponent } from "src/app/pages/workshop-profile/modal-license/modal-license.component";
 
 @NgModule({
   imports: [
@@ -49,6 +54,11 @@ import { ModalNewWorkshopComponent } from "src/app/pages/workshops/modal-new-wor
     ModalOwnerComponent,
     ModalPenaltyComponent,
     ModalNewWorkshopComponent,
+    ModalLicenseComponent,
+    ModalVehicleComponent,
+    ModalNewServiceComponent,
+    ServicesComponent,
+    ServicesDetailsComponent,
   ],
   providers: [],
 })

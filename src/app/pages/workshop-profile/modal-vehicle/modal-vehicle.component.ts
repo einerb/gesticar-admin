@@ -7,12 +7,14 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
   styleUrls: ["./modal-vehicle.component.scss"],
 })
 export class ModalVehicleComponent implements OnInit {
-  @Input() title;
   @Input() data;
 
   constructor(public activeModal: NgbActiveModal) {}
 
   ngOnInit(): void {
-    console.log(this.data);
+  }
+
+  public create() {
+    this.activeModal.close("success");
   }
 }

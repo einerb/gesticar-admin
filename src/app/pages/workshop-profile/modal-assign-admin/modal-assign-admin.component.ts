@@ -11,6 +11,7 @@ import { GlobalService, UserService } from "src/app/services";
 export class ModalAssignAdminComponent implements OnInit {
   @Input() title;
   @Input() data;
+  @Input() admin;
   public addForm: FormGroup;
   public model: NgbDateStruct;
 
@@ -46,7 +47,7 @@ export class ModalAssignAdminComponent implements OnInit {
       identification: this.addForm.get("identification").value,
       name: this.addForm.get("name").value,
       lastname: this.addForm.get("lastname").value,
-      role_id: 2,
+      role_id: this.admin.role.role === "ADMIN" ? 3 : 2,
       occupation: this.addForm.get("occupation").value,
       city: this.addForm.get("city").value,
       address: this.addForm.get("address").value,
