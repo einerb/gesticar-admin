@@ -18,7 +18,7 @@
             <ng-container *ngIf="allowEdit">Hola, </ng-container
             >{{ infoFullUser?.name | titlecase }}
             <ng-container *ngIf="!allowEdit">{{
-              infoFullUser?.name | titlecase
+              infoFullUser?.lastname | titlecase
             }}</ng-container>
           </h1>
           <ng-container *ngIf="infoFullUser?.car !== null">
@@ -50,6 +50,15 @@
               "
             >
               Asociar Vehículo
+            </button>
+          </ng-container>
+          <ng-container *ngIf="infoFullUser?.car !== null">
+            <button
+              class="btn btn-warning"
+              [disabled]="!infoFullUser?.workshops.state"
+              (click)="openModalLicense(null, false, infoFullUser)"
+            >
+              Agregar licencia
             </button>
           </ng-container>
           <span
@@ -153,11 +162,7 @@
                 <a
                   href="javascript:void(0)"
                   (click)="
-                    openModalLicense(
-                      infoFullUser?.licenses,
-                      true,
-                      infoFullUser?.identification
-                    )
+                    openModalLicense(infoFullUser?.licenses, true, infoFullUser)
                   "
                   >Licencias</a
                 >
@@ -334,140 +339,644 @@
                 </div>
               </div>
             </form>
-            <!-- <form>
-              <h6 class="heading-small text-muted mb-4">Información usuario</h6>
-              <div class="pl-lg-4">
-                <div class="row">
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label class="form-control-label" for="input-username"
-                        >Username</label
-                      >
-                      <input
-                        type="text"
-                        id="input-username"
-                        class="form-control form-control-alternative"
-                        placeholder="Username"
-                        value="lucky.jesse"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label class="form-control-label" for="input-email"
-                        >Email address</label
-                      >
-                      <input
-                        type="email"
-                        id="input-email"
-                        class="form-control form-control-alternative"
-                        placeholder="jesse@example.com"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label class="form-control-label" for="input-first-name"
-                        >First name</label
-                      >
-                      <input
-                        type="text"
-                        id="input-first-name"
-                        class="form-control form-control-alternative"
-                        placeholder="First name"
-                        value="Lucky"
-                      />
-                    </div>
-                  </div>
-                  <div class="col-lg-6">
-                    <div class="form-group">
-                      <label class="form-control-label" for="input-last-name"
-                        >Last name</label
-                      >
-                      <input
-                        type="text"
-                        id="input-last-name"
-                        class="form-control form-control-alternative"
-                        placeholder="Last name"
-                        value="Jesse"
-                      />
-                    </div>
-                  </div>
-                </div>
+            <hr class="my-4" *ngIf="infoFullUser?.car === null" />
+            <h6
+              class="heading-small text-muted mb-4"
+              *ngIf="infoFullUser?.car === null"
+            >
+              Información Automotor
+            </h6>
+            <div class="pl-lg-4" *ngIf="infoFullUser?.car === null">
+              <label>No tiene un automotor asociado</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding: 15px"></div>
+    <div class="row" *ngIf="infoFullUser?.car !== null">
+      <div class="col-xl-12 order-xl-1">
+        <div class="card bg-secondary shadow">
+          <div class="card-header bg-white border-0">
+            <div class="row align-items-center">
+              <div class="col-8">
+                <h3 class="mb-0">Información Automotor</h3>
               </div>
-              <hr class="my-4" />
-              <h6 class="heading-small text-muted mb-4">
-                Información Automotor
-              </h6>
-              <div class="pl-lg-4">
-                <label *ngIf="infoFullUser?.car === null"
-                  >No tiene un automotor asociado</label
+              <div class="col-4 text-right" *ngIf="allowEdit">
+                <a [routerLink]="['/settings']" class="btn btn-sm btn-primary"
+                  >Ajustes</a
                 >
               </div>
+            </div>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="vehicleForm" novalidate>
               <div class="pl-lg-4">
                 <div class="row">
-                  <div class="col-md-12">
+                  <div class="col-lg-6">
                     <div class="form-group">
-                      <label class="form-control-label" for="input-address"
-                        >Address</label
-                      >
+                      <label class="form-control-label">Placa</label>
                       <input
-                        id="input-address"
-                        class="form-control form-control-alternative"
-                        placeholder="Home Address"
-                        value="Bld Mihail Kogalniceanu, nr. 8 Bl 1, Sc 1, Ap 09"
                         type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Placa"
+                        formControlName="plate"
+                        readonly
                       />
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Tipo de vehículo</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Tipo de vehículo"
+                        formControlName="typeVehicle"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.typeVehicle.hasError('required')"
+                      >
+                        El tipo de vehículo es requerido *
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Marca</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Marca"
+                        formControlName="brand"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.brand.hasError('required')"
+                      >
+                        La marca es requerida *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Línea</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Línea"
+                        formControlName="line"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.line.hasError('required')"
+                      >
+                        La línea es requerida *
+                      </span>
                     </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-lg-4">
                     <div class="form-group">
-                      <label class="form-control-label" for="input-city"
-                        >City</label
+                      <label class="form-control-label">Modelo</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Modelo"
+                        formControlName="model"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.model.hasError('required')"
+                      >
+                        El modelo es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label">Color</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Color"
+                        formControlName="color"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.color.hasError('required')"
+                      >
+                        El color es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label">Cilindraje</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Cilindraje"
+                        formControlName="cylinder"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.cylinder.hasError('required')"
+                      >
+                        El cilindraje es requerido *
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label">Carrocería</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Carrocería"
+                        formControlName="bodywork"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.bodywork.hasError('required')"
+                      >
+                        La carrocería es requerida *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label">Tipo de servicio</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Tipo de servicio"
+                        formControlName="typeService"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.typeService.hasError('required')"
+                      >
+                        El tipo de servicio es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label">Divipola</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Carrocería"
+                        formControlName="divipola"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.bodywork.hasError('required')"
+                      >
+                        La carrocería es requerida *
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                      <label class="form-control-label"
+                        >Peso Bruto Vehicular</label
                       >
                       <input
                         type="text"
-                        id="input-city"
                         class="form-control form-control-alternative"
-                        placeholder="City"
-                        value="New York"
+                        placeholder="PBV"
+                        formControlName="pbv"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.pbv.hasError('required')"
+                      >
+                        La peso es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                      <label class="form-control-label">Tonelaje</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Tonelaje"
+                        formControlName="tonnage"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.tonnage.hasError('required')"
+                      >
+                        El tonelaje es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                      <label class="form-control-label"
+                        >Número de ocupantes</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="# ocupantes"
+                        formControlName="occupant"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.occupant.hasError('required')"
+                      >
+                        El # ocupantes es requerido *
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                      <label class="form-control-label">Número de motor</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Número de motor"
+                        formControlName="noMotor"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.noMotor.hasError('required')"
+                      >
+                        El # motor es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                      <label class="form-control-label">Número de chasis</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Número de chasis"
+                        formControlName="noChasis"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.noChasis.hasError('required')"
+                      >
+                        El # chasis es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                      <label class="form-control-label">Número de serie</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Número de serie"
+                        formControlName="noSerie"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.noSerie.hasError('required')"
+                      >
+                        El # serie es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="form-group">
+                      <label class="form-control-label">Número VIN</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Número VIN"
+                        formControlName="noVin"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.noVin.hasError('required')"
+                      >
+                        El # VIN es requerido *
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Origen</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Origen"
+                        formControlName="countryOrigin"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.countryOrigin.hasError('required')"
+                      >
+                        El origen es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label"
+                        >Agencia de tránsito</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Agencia de tránsito"
+                        formControlName="transitAgency"
+                        value="Colombia"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.transitAgency.hasError('required')"
+                      >
+                        La agencia de tránsito es requerido *
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label">Combustible</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Combustible"
+                        formControlName="fuel"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.fuel.hasError('required')"
+                      >
+                        El combustible es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label"
+                        >Estado del vehículo RUNT</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Estado RUNT"
+                        formControlName="statusVehicle"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-6">
+                    <div class="form-group">
+                      <label class="form-control-label"
+                        >Fecha de matrícula</label
+                      ><br />
+                      <div class="input-group">
+                        <input
+                          class="form-control"
+                          placeholder="yyyy-mm-dd"
+                          name="dp1"
+                          ngbDatepicker
+                          #d="ngbDatepicker"
+                          formControlName="enrollmentDate"
+                          readonly
+                        />
+                        <button
+                          class="btn btn-outline-primary"
+                          (click)="d.toggle()"
+                          type="button"
+                        >
+                          <i class="fas fa-calendar-alt"></i>
+                        </button>
+                      </div>
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.enrollmentDate.hasError('required')"
+                      >
+                        La fecha de matricula es requerida *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-6"></div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label">Número SOAT</label>
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Número SOAT"
+                        formControlName="soatNumber"
+                      />
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.soatNumber.hasError('required')"
+                      >
+                        El # SOAT es requerido *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label"
+                        >Fecha de expedición</label
+                      ><br />
+                      <div class="input-group">
+                        <input
+                          class="form-control"
+                          placeholder="yyyy-mm-dd"
+                          name="dp2"
+                          ngbDatepicker
+                          #d2="ngbDatepicker"
+                          formControlName="expeditionDateSoat"
+                          readonly
+                        />
+                        <button
+                          class="btn btn-outline-primary"
+                          (click)="d2.toggle()"
+                          type="button"
+                        >
+                          <i class="fas fa-calendar-alt"></i>
+                        </button>
+                      </div>
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.expeditionDateSoat.hasError('required')"
+                      >
+                        La fecha de expedición es requerida *
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label"
+                        >Fecha de vencimiento</label
+                      ><br />
+                      <div class="input-group">
+                        <input
+                          class="form-control"
+                          placeholder="yyyy-mm-dd"
+                          name="dp3"
+                          ngbDatepicker
+                          #d3="ngbDatepicker"
+                          formControlName="dueDateSoat"
+                          readonly
+                        />
+                        <button
+                          class="btn btn-outline-primary"
+                          (click)="d3.toggle()"
+                          type="button"
+                        >
+                          <i class="fas fa-calendar-alt"></i>
+                        </button>
+                      </div>
+                      <span
+                        class="badge badge-danger"
+                        *ngIf="g.dueDateSoat.hasError('required')"
+                      >
+                        La fecha de vencimiento es requerida *
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label">Tiene blindaje?</label
+                      ><br />
+                      <label class="custom-toggle">
+                        <input
+                          type="checkbox"
+                          checked=""
+                          formControlName="isShielding"
+                        />
+                        <span
+                          class="custom-toggle-slider rounded-circle"
+                        ></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label"
+                        >Nivel de blindaje</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control form-control-alternative"
+                        placeholder="Nivel de blindaje"
+                        formControlName="levelShielding"
+                        [disabled]="!hidden"
                       />
                     </div>
                   </div>
                   <div class="col-lg-4">
                     <div class="form-group">
-                      <label class="form-control-label" for="input-country"
-                        >Country</label
-                      >
-                      <input
-                        type="text"
-                        id="input-country"
-                        class="form-control form-control-alternative"
-                        placeholder="Country"
-                        value="United States"
-                      />
+                      <label class="form-control-label">Fecha de blindaje</label
+                      ><br />
+                      <div class="input-group">
+                        <input
+                          class="form-control"
+                          placeholder="yyyy-mm-dd"
+                          name="dp4"
+                          ngbDatepicker
+                          #d4="ngbDatepicker"
+                          formControlName="dateShielding"
+                          readonly
+                        />
+                        <button
+                          class="btn btn-outline-primary"
+                          (click)="d4.toggle()"
+                          type="button"
+                        >
+                          <i class="fas fa-calendar-alt"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label">Requiere revisión</label
+                      ><br />
+                      <label class="custom-toggle">
+                        <input
+                          type="checkbox"
+                          checked=""
+                          formControlName="requireTechReview"
+                        />
+                        <span
+                          class="custom-toggle-slider rounded-circle"
+                        ></span>
+                      </label>
                     </div>
                   </div>
                   <div class="col-lg-4">
                     <div class="form-group">
-                      <label class="form-control-label" for="input-country"
-                        >Postal code</label
+                      <label class="form-control-label">Revisión técnica</label
+                      ><br />
+                      <label class="custom-toggle">
+                        <input
+                          type="checkbox"
+                          checked=""
+                          formControlName="techReview"
+                        />
+                        <span
+                          class="custom-toggle-slider rounded-circle"
+                        ></span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="form-group">
+                      <label class="form-control-label"
+                        >Estado en plataforma</label
+                      ><br />
+                      <label class="custom-toggle">
+                        <input
+                          type="checkbox"
+                          checked=""
+                          formControlName="state2"
+                        />
+                        <span
+                          class="custom-toggle-slider rounded-circle"
+                        ></span>
+                      </label>
+                    </div>
+                  </div>
+                  <hr class="my-4" />
+                  <div class="row">
+                    <div class="col-lg-12 text-right">
+                      <a (click)="editVehicle()" class="btn btn-success"
+                        >Editar vehículo</a
                       >
-                      <input
-                        type="number"
-                        id="input-postal-code"
-                        class="form-control form-control-alternative"
-                        placeholder="Postal code"
-                      />
                     </div>
                   </div>
                 </div>
               </div>
-            </form> -->
+            </form>
           </div>
         </div>
       </div>

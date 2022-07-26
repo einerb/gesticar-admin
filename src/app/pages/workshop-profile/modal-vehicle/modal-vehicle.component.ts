@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgbActiveModal, NgbDateStruct } from "@ng-bootstrap/ng-bootstrap";
 import { BlockUI, NgBlockUI } from "ng-block-ui";
 import { Car } from "src/app/entities/car.entity";
 
@@ -16,7 +16,7 @@ export class ModalVehicleComponent implements OnInit {
   @BlockUI() blockUI: NgBlockUI;
   public searchForm: FormGroup;
   public addForm: FormGroup;
-  public result: Car;
+  public result: any;
   public loading = false;
 
   constructor(
@@ -40,7 +40,9 @@ export class ModalVehicleComponent implements OnInit {
     this.createForm();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    if (this.data.isExist) this.patchValue(this.data?.vehicle);
+  }
 
   get f() {
     return this.searchForm.controls;
@@ -51,7 +53,7 @@ export class ModalVehicleComponent implements OnInit {
   }
 
   public create() {
-    if (this.searchForm.invalid) {
+    if (this.addForm.invalid) {
       return;
     }
 
@@ -62,15 +64,25 @@ export class ModalVehicleComponent implements OnInit {
       color: this.addForm.get("color").value,
       countryOrigin: this.addForm.get("countryOrigin").value,
       cylinder: this.addForm.get("cylinder").value,
-      dateShielding: this.addForm.get("dateShielding").value,
+      dateShielding: this.formattedDateInv(
+        this.addForm.get("dateShielding").value
+      ),
       divipola: this.addForm.get("divipola").value,
-      dueDateSoat: this.addForm.get("dueDateSoat").value,
-      enrollmentDate: this.addForm.get("enrollmentDate").value,
-      expeditionDateSoat: this.addForm.get("expeditionDateSoat").value,
+      dueDateSoat: this.formattedDateInv(this.addForm.get("dueDateSoat").value),
+      enrollmentDate: this.formattedDateInv(
+        this.addForm.get("enrollmentDate").value
+      ),
+      expeditionDateSoat: this.formattedDateInv(
+        this.addForm.get("expeditionDateSoat").value
+      ),
       fuel: this.addForm.get("fuel").value,
       identificationOwner: this.data.id,
-      isShielding: this.addForm.get("isShielding").value,
-      levelShielding: this.addForm.get("levelShielding").value,
+      isShielding: this.addForm.get("isShielding").value
+        ? this.addForm.get("isShielding").value
+        : false,
+      levelShielding: this.addForm.get("levelShielding").value
+        ? this.addForm.get("levelShielding").value
+        : null,
       line: this.addForm.get("line").value,
       model: this.addForm.get("model").value,
       noChasis: this.addForm.get("noChasis").value,
@@ -111,11 +123,46 @@ export class ModalVehicleComponent implements OnInit {
       .getVehicle("CC", this.data.id, this.searchForm.get("plateSearch").value)
       .subscribe((res: any) => {
         this.blockUI.stop();
-        this.loading = false;
+
         if (res.data?.mensaje !== undefined && res.data?.mensaje !== "") {
           this.globalService.onFailure(res.data.mensaje);
         } else {
-          this.result = res.data;
+          this.blockUI.start();
+
+          this.carService
+            .getVehicleComplete(this.searchForm.get("plateSearch").value)
+            .subscribe((resComplete: any) => {
+              this.blockUI.stop();
+              this.loading = false;
+              this.result = {
+                plate: resComplete.data.vehicle?.noPlaca,
+                bodywork: resComplete.data.vehicle?.tipoCarroceria,
+                brand: resComplete.data.vehicle?.marca,
+                color: res.data.vehicleInformation?.color,
+                countryOrigin: resComplete.data.vehicle?.ciudad,
+                cylinder: resComplete.data.vehicle?.cilindraje,
+                divipola: resComplete.data.vehicle?.divipola,
+                dueDateSoat: res.data.soat?.dueDate,
+                enrollmentDate: res.data.vehicleInformation?.enrollmentDate,
+                expeditionDateSoat: res.data.soat?.expeditionDate,
+                fuel: resComplete.data.vehicle?.tipoCombustible,
+                line: resComplete.data.vehicle?.linea,
+                model: resComplete.data.vehicle?.modelo,
+                noChasis: resComplete.data.vehicle?.noChasis,
+                noMotor: resComplete.data.vehicle?.noMotor,
+                noVin: resComplete.data.vehicle?.noVin,
+                occupant: resComplete.data.vehicle?.ocupantes,
+                requireTechReview: res.data.techReview?.requireTechReview,
+                soatNumber: res.data.soat?.soatNumber,
+                statusVehicle: resComplete.data.vehicle?.estadoDelVehiculo,
+                techReview: res.data.techReview?.valid,
+                tonnage: resComplete.data.vehicle?.toneladas,
+                typeService: resComplete.data.vehicle?.tipoServicio,
+                typeVehicle: resComplete.data.vehicle?.claseVehiculo,
+              };
+
+              this.patchValue(this.result);
+            });
         }
       });
   }
@@ -136,15 +183,14 @@ export class ModalVehicleComponent implements OnInit {
       color: ["", [Validators.required]],
       countryOrigin: ["", [Validators.required]],
       cylinder: ["", [Validators.required]],
-      dateShielding: ["", [Validators.required]],
+      dateShielding: [""],
       divipola: ["", [Validators.required]],
-      dueDateSoat: ["", [Validators.required]],
-      enrollmentDate: ["", [Validators.required]],
-      expeditionDateSoat: ["", [Validators.required]],
+      dueDateSoat: [""],
+      enrollmentDate: [""],
+      expeditionDateSoat: [""],
       fuel: ["", [Validators.required]],
-      identificationOwner: ["", [Validators.required]],
-      isShielding: ["", [Validators.required]],
-      levelShielding: ["", [Validators.required]],
+      isShielding: [false],
+      levelShielding: [null],
       line: ["", [Validators.required]],
       model: ["", [Validators.required]],
       noChasis: ["", [Validators.required]],
@@ -155,13 +201,84 @@ export class ModalVehicleComponent implements OnInit {
       pbv: ["", [Validators.required]],
       requireTechReview: ["", [Validators.required]],
       soatNumber: ["", [Validators.required]],
-      state: ["", [Validators.required]],
+      state: [false],
       statusVehicle: ["", [Validators.required]],
       techReview: ["", [Validators.required]],
       tonnage: ["", [Validators.required]],
       transitAgency: ["", [Validators.required]],
       typeService: ["", [Validators.required]],
       typeVehicle: ["", [Validators.required]],
+    });
+  }
+
+  private formattedDate(date: string) {
+    let dateFinal;
+    let dateFormatted;
+
+    if (date.includes("/")) {
+      dateFormatted = date?.split("/");
+      dateFinal = {
+        year: parseInt(dateFormatted[2]),
+        month: parseInt(dateFormatted[1]),
+        day: parseInt(dateFormatted[0]),
+      };
+    } else {
+      dateFormatted = date?.split("-");
+      dateFinal = {
+        year: parseInt(dateFormatted[0]),
+        month: parseInt(dateFormatted[1]),
+        day: parseInt(dateFormatted[2]),
+      };
+    }
+
+    return dateFinal;
+  }
+
+  private formattedDateInv(date: any) {
+    let dateFinal;
+    if (date !== undefined) {
+      dateFinal = `${date.year}-${date.month}-${date.day}`;
+    } else {
+      dateFinal = null;
+    }
+
+    return dateFinal;
+  }
+
+  private patchValue(data) {
+    this.addForm.patchValue({
+      plate: data?.plate,
+      bodywork: data?.bodywork,
+      brand: data?.brand,
+      color: data?.color,
+      countryOrigin: data?.countryOrigin,
+      cylinder: data?.cylinder,
+      dateShielding: data?.dateShielding,
+      divipola: data?.divipola,
+      dueDateSoat: this.formattedDate(data?.dueDateSoat),
+      enrollmentDate: this.formattedDate(data?.enrollmentDate),
+      expeditionDateSoat: this.formattedDate(data?.expeditionDateSoat),
+      fuel: data?.fuel,
+      identificationOwner: data?.identificationOwner,
+      isShielding: data?.isShielding,
+      levelShielding: data?.levelShielding,
+      line: data?.line,
+      model: data?.model,
+      noChasis: data?.noChasis,
+      noMotor: data?.noMotor,
+      noSerie: data?.noSerie,
+      noVin: data?.noVin,
+      occupant: data?.occupant,
+      pbv: data?.pbv,
+      requireTechReview: data?.requireTechReview,
+      soatNumber: data?.soatNumber,
+      state: data?.state,
+      statusVehicle: data?.statusVehicle,
+      techReview: data?.techReview,
+      tonnage: data?.tonnage,
+      transitAgency: data?.transitAgency,
+      typeService: data?.typeService,
+      typeVehicle: data?.typeVehicle,
     });
   }
 }

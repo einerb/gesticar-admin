@@ -2,7 +2,7 @@
   <h4 class="modal-title">{{ data.title }}</h4>
 </div>
 <div class="modal-body">
-  <div class="table-responsive">
+  <div class="table-responsive" *ngIf="data.isExist">
     <table class="table align-items-center table-flush">
       <thead class="thead-light">
         <tr>
@@ -11,6 +11,7 @@
           <th scope="col">Fecha de Expedición</th>
           <th scope="col">Fecha de Vencimiento</th>
           <th scope="col">Estado</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
@@ -23,23 +24,122 @@
             <span class="badge badge-dot mr-4">
               <i
                 [ngClass]="
-                  license.statusLicense === 'activo'
+                  license.statusLicense === 'ACTIVO'
                     ? 'bg-success'
                     : 'bg-warning'
                 "
               ></i>
-              {{ license.statusLicense === "activo" ? "Activa" : "Inactiva" }}
+              {{ license.statusLicense === "ACTIVO" ? "Activa" : "Inactiva" }}
             </span>
+          </td>
+          <td class="text-right">
+            <div class="d-flex align-items-center">
+              <i
+                class="ni ni-fat-remove text-danger"
+                style="cursor: pointer; font-size: 30px"
+                (click)="delete(license.id)"
+                data-toggle="tooltip"
+                ngbTooltip="Eliminar"
+              ></i>
+            </div>
           </td>
         </tr>
         <tr *ngIf="data.license?.length === 0">
-          <th colspan="5" class="text-center">
+          <th colspan="6" class="text-center">
             <span class="mb-0 text-sm">No información de licencias</span>
           </th>
         </tr>
       </tbody>
     </table>
   </div>
+  <form [formGroup]="addForm" novalidate *ngIf="!data.isExist">
+    <div class="pl-lg-4">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label class="form-control-label">Categoría</label>
+            <select formControlName="category" class="form-control">
+              <option value="">Seleccione categoría</option>
+              <option value="A1">A1</option>
+              <option value="A2">A2</option>
+              <option value="B1">B1</option>
+              <option value="B2">B2</option>
+              <option value="B3">B3</option>
+              <option value="C1">C1</option>
+              <option value="C2">C2</option>
+              <option value="C3">C3</option>
+            </select>
+            <span
+              class="badge badge-danger"
+              *ngIf="g.category.hasError('required')"
+            >
+              La categoría es requerida *
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label class="form-control-label">Fecha de expedición</label><br />
+            <div class="input-group">
+              <input
+                class="form-control"
+                placeholder="yyyy-mm-dd"
+                name="dp1"
+                ngbDatepicker
+                #d1="ngbDatepicker"
+                formControlName="expeditionDate"
+                readonly
+              />
+              <button
+                class="btn btn-outline-primary"
+                (click)="d1.toggle()"
+                type="button"
+              >
+                <i class="fas fa-calendar-alt"></i>
+              </button>
+            </div>
+            <span
+              class="badge badge-danger"
+              *ngIf="g.expeditionDate.hasError('required')"
+            >
+              La fecha de expedición es requerida *
+            </span>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group">
+            <label class="form-control-label">Fecha de vencimiento</label><br />
+            <div class="input-group">
+              <input
+                class="form-control"
+                placeholder="yyyy-mm-dd"
+                name="dp2"
+                ngbDatepicker
+                #d2="ngbDatepicker"
+                formControlName="dueDate"
+                readonly
+              />
+              <button
+                class="btn btn-outline-primary"
+                (click)="d2.toggle()"
+                type="button"
+              >
+                <i class="fas fa-calendar-alt"></i>
+              </button>
+            </div>
+            <span
+              class="badge badge-danger"
+              *ngIf="g.dueDate.hasError('required')"
+            >
+              La fecha de vencimiento es requerida *
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
 </div>
 <div class="modal-footer">
   <button
@@ -48,5 +148,8 @@
     (click)="activeModal.close('Close click')"
   >
     Cerrar
+  </button>
+  <button class="btn btn-success" (click)="create()" *ngIf="!data.isExist">
+    Crear
   </button>
 </div>

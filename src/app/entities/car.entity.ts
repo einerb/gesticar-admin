@@ -1,6 +1,6 @@
 export class Car {
   id?: number;
-  plate: string;
+  plate?: string;
   color: string;
   brand: string;
   line: string;

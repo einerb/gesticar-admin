@@ -33,10 +33,14 @@ export const Endpoint = {
     BASE: environment.apiHost + environment.apiVersion + "vehicle",
     BASEAPI: (documentType, documentNumber, plate) =>
       `https://api.verifik.co/v2/co/runt/consultarVehiculo?documentType=${documentType}&documentNumber=${documentNumber}&plate=${plate}`,
+    BASEAPICOMPLETE: (plate) =>
+      `https://api.verifik.co/v2/co/runt/consultarVehiculoCompleto?plate=${plate}`,
     OWNER: (plate) =>
       `https://api.verifik.co/v2/co/soat/consultarVehiculo?plate=${plate}`,
     PENALTY: (documentType, documentNumber) =>
       `https://api.verifik.co/v2/co/simit/consultarComparendos?documentType=${documentType}&documentNumber=${documentNumber}`,
-      
+  },
+  LICENSE: {
+    BASE: environment.apiHost + environment.apiVersion + "license",
   },
 };

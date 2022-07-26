@@ -12,7 +12,10 @@ import { GlobalService } from "./global.service";
 export class VehicleService {
   private httpOptions;
 
-  constructor(private http: HttpClient, private readonly globalService: GlobalService) {
+  constructor(
+    private http: HttpClient,
+    private readonly globalService: GlobalService
+  ) {
     this.httpOptions = new HttpHeaders().set("Authorization", Api.tokenVerifk);
   }
 
@@ -23,6 +26,18 @@ export class VehicleService {
   ) {
     return this.http
       .get(Api.Endpoints.CAR.BASEAPI(documentType, documentNumber, plate), {
+        headers: this.httpOptions,
+      })
+      .pipe(
+        map((res) => {
+          return res;
+        })
+      );
+  }
+
+  public getVehicleComplete(plate: string) {
+    return this.http
+      .get(Api.Endpoints.CAR.BASEAPICOMPLETE(plate), {
         headers: this.httpOptions,
       })
       .pipe(

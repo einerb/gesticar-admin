@@ -41,12 +41,14 @@ export class UserProfileComponent implements OnInit {
   public allowEdit: boolean = false;
   public userInfo: User;
   public editForm: FormGroup;
+  public vehicleForm: FormGroup;
   public model: NgbDateStruct;
   public maxDate = {
     year: parseInt(moment(new Date()).add(-18, "years").format("YYYY")),
     month: parseInt(moment(new Date().getMonth()).format("MM")),
     day: parseInt(moment(new Date().getDay()).format("DD")),
   };
+  public id: number;
 
   constructor(
     private readonly userService: UserService,
@@ -64,6 +66,7 @@ export class UserProfileComponent implements OnInit {
     this.blockUI.start();
 
     this.createForm();
+    this.createFormVehicle();
   }
 
   ngOnInit() {
@@ -71,10 +74,10 @@ export class UserProfileComponent implements OnInit {
     this.userInfo = this.authService.getDecodedAccessToken(token);
 
     this.route.params.subscribe((params) => {
-      let id = params["id"];
-      this.getUserInfo(id);
+      this.id = params["id"];
+      this.getUserInfo(this.id);
 
-      this.userInfo.identification.toString() === id
+      this.userInfo.identification === this.id
         ? (this.allowEdit = true)
         : (this.allowEdit = false);
     });
@@ -84,17 +87,14 @@ export class UserProfileComponent implements OnInit {
     return this.editForm.controls;
   }
 
+  get g() {
+    return this.vehicleForm.controls;
+  }
+
   public edit(identification: number) {
     if (this.editForm.invalid) {
       return;
     }
-
-    let birthdateFormatted =
-      this.editForm.get("birthdate").value?.year +
-      "-" +
-      this.editForm.get("birthdate").value?.month +
-      "-" +
-      this.editForm.get("birthdate").value?.day;
 
     const data: any = {
       name: this.editForm.get("name").value,
@@ -102,7 +102,7 @@ export class UserProfileComponent implements OnInit {
       occupation: this.editForm.get("occupation").value,
       city: this.editForm.get("city").value,
       address: this.editForm.get("address").value,
-      birthdate: birthdateFormatted,
+      birthdate: this.formattedDateInv(this.editForm.get("birthdate").value),
       phone: this.editForm.get("phone").value,
       state: this.editForm.get("state").value,
       gender: this.infoFullUser.gender,
@@ -121,7 +121,72 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  public openModalLicense(licencias: [], isExist?: boolean, id?: number) {
+  public editVehicle() {
+    if (this.vehicleForm.invalid) {
+      return;
+    }
+
+    const data: Car = {
+      plate: this.infoFullUser.car["plate"],
+      bodywork: this.vehicleForm.get("bodywork").value,
+      brand: this.vehicleForm.get("brand").value,
+      color: this.vehicleForm.get("color").value,
+      countryOrigin: this.vehicleForm.get("countryOrigin").value,
+      cylinder: this.vehicleForm.get("cylinder").value,
+      dateShielding:
+        this.vehicleForm.get("dateShielding").value === null
+          ? null
+          : this.formattedDateInv(this.vehicleForm.get("dateShielding").value),
+      divipola: this.vehicleForm.get("divipola").value,
+      dueDateSoat: this.formattedDateInv(
+        this.vehicleForm.get("dueDateSoat").value
+      ),
+      enrollmentDate: this.formattedDateInv(
+        this.vehicleForm.get("enrollmentDate").value
+      ),
+      expeditionDateSoat: this.formattedDateInv(
+        this.vehicleForm.get("expeditionDateSoat").value
+      ),
+      fuel: this.vehicleForm.get("fuel").value,
+      identificationOwner: this.id,
+      isShielding: this.vehicleForm.get("isShielding").value
+        ? this.vehicleForm.get("isShielding").value
+        : false,
+      levelShielding: this.vehicleForm.get("levelShielding").value
+        ? this.vehicleForm.get("levelShielding").value
+        : null,
+      line: this.vehicleForm.get("line").value,
+      model: this.vehicleForm.get("model").value,
+      noChasis: this.vehicleForm.get("noChasis").value,
+      noMotor: this.vehicleForm.get("noMotor").value,
+      noSerie: this.vehicleForm.get("noSerie").value,
+      noVin: this.vehicleForm.get("noVin").value,
+      occupant: this.vehicleForm.get("occupant").value,
+      pbv: this.vehicleForm.get("pbv").value,
+      requireTechReview: this.vehicleForm.get("requireTechReview").value,
+      soatNumber: this.vehicleForm.get("soatNumber").value,
+      state: this.vehicleForm.get("state2").value,
+      statusVehicle: this.vehicleForm.get("statusVehicle").value,
+      techReview: this.vehicleForm.get("techReview").value,
+      tonnage: this.vehicleForm.get("tonnage").value,
+      transitAgency: this.vehicleForm.get("transitAgency").value,
+      typeService: this.vehicleForm.get("typeService").value,
+      typeVehicle: this.vehicleForm.get("typeVehicle").value,
+    };
+
+    this.vehicleService
+      .update(this.infoFullUser.car["plate"], data)
+      .subscribe((res) => {
+        if (res.code > 1000) {
+          this.globalService.onSuccess(res.message);
+          this.getUserInfo(this.id);
+        } else {
+          this.globalService.onFailure(res.error);
+        }
+      });
+  }
+
+  public openModalLicense(licencias: [], isExist?: boolean, user?: User) {
     const modalRef = this.modalService.open(ModalLicenseComponent, {
       size: "lg",
     });
@@ -130,9 +195,13 @@ export class UserProfileComponent implements OnInit {
       title: isExist ? "Licencias" : "Agregar licencia",
       license: licencias,
       isExist: isExist,
-      id: id,
+      id: user,
     };
     modalRef.componentInstance.data = data;
+
+    modalRef.result.then(() => {
+      this.getUserInfo(user.identification);
+    });
   }
 
   public openModalPenalty() {
@@ -175,6 +244,12 @@ export class UserProfileComponent implements OnInit {
       id: id,
     };
     modalRef.componentInstance.data = data;
+
+    modalRef.result.then((result) => {
+      if (result == "success") {
+        this.getUserInfo(id);
+      }
+    });
   }
 
   private createForm() {
@@ -186,8 +261,72 @@ export class UserProfileComponent implements OnInit {
       address: [""],
       birthdate: [""],
       phone: [""],
-      state: [false, [Validators.required]],
+      state: [false],
     });
+  }
+
+  private createFormVehicle() {
+    this.vehicleForm = this.formBuilder.group({
+      plate: [""],
+      bodywork: ["", [Validators.required]],
+      brand: ["", [Validators.required]],
+      color: ["", [Validators.required]],
+      countryOrigin: ["", [Validators.required]],
+      cylinder: ["", [Validators.required]],
+      dateShielding: [""],
+      divipola: ["", [Validators.required]],
+      dueDateSoat: [""],
+      enrollmentDate: [""],
+      expeditionDateSoat: [""],
+      fuel: ["", [Validators.required]],
+      isShielding: [false],
+      levelShielding: [null],
+      line: ["", [Validators.required]],
+      model: ["", [Validators.required]],
+      noChasis: ["", [Validators.required]],
+      noMotor: ["", [Validators.required]],
+      noSerie: ["", [Validators.required]],
+      noVin: ["", [Validators.required]],
+      occupant: ["", [Validators.required]],
+      pbv: ["", [Validators.required]],
+      requireTechReview: ["", [Validators.required]],
+      soatNumber: ["", [Validators.required]],
+      state2: [false],
+      statusVehicle: ["", [Validators.required]],
+      techReview: ["", [Validators.required]],
+      tonnage: ["", [Validators.required]],
+      transitAgency: ["", [Validators.required]],
+      typeService: ["", [Validators.required]],
+      typeVehicle: ["", [Validators.required]],
+    });
+  }
+
+  private formattedDate(date: string) {
+    let dateFinal;
+    if (date !== undefined) {
+      let dateFormatted = date.split("-");
+
+      dateFinal = {
+        year: parseInt(dateFormatted[0]),
+        month: parseInt(dateFormatted[1]),
+        day: parseInt(dateFormatted[2]),
+      };
+    } else {
+      dateFinal = null;
+    }
+
+    return dateFinal;
+  }
+
+  private formattedDateInv(date: any) {
+    let dateFinal;
+    if (date !== undefined) {
+      dateFinal = `${date?.year}-${date?.month}-${date?.day}`;
+    } else {
+      dateFinal = null;
+    }
+
+    return dateFinal;
   }
 
   private getServiceCount(stateService: string) {
@@ -205,7 +344,10 @@ export class UserProfileComponent implements OnInit {
   }
 
   private getAge(birthdate: string) {
-    this.age = moment(new Date()).diff(birthdate, "years");
+    this.age = moment(moment(new Date()).format("YYYY-MM-DD")).diff(
+      moment(birthdate).format("YYYY-MM-DD"),
+      "years"
+    );
   }
 
   private getInfoOwner(car: any) {
@@ -261,20 +403,20 @@ export class UserProfileComponent implements OnInit {
 
       this.infoFullUser = res.data;
       this.patchValue(this.infoFullUser);
-      this.getRole(res.data.role.role);
-      this.getAge(res.data.birthdate);
-      this.getCreatedAt(res.data.createdAt);
-      res.data.services.forEach((service) => {
+      this.getRole(res.data?.role.role);
+      this.getAge(res.data?.birthdate);
+      this.getCreatedAt(res.data?.createdAt);
+      if (this.infoFullUser?.car) this.patchValueVehcile(this.infoFullUser.car);
+      res.data?.services.forEach((service) => {
         this.getServiceCount(service.state);
       });
 
-      this.infoFullUser.workshops = res.data.workshops[0];
+      if (this.infoFullUser?.workshops !== undefined)
+        this.infoFullUser.workshops = res.data?.workshops[0];
     });
   }
 
   private patchValue(data) {
-    let birthdate = data?.birthdate.split("-");
-
     this.editForm.patchValue({
       identification: data?.identification,
       name: data?.name,
@@ -282,11 +424,48 @@ export class UserProfileComponent implements OnInit {
       occupation: data?.occupation,
       city: data?.city,
       address: data?.address,
-      birthdate: this.model,
+      birthdate: this.formattedDate(data?.birthdate),
       phone: data?.phone,
       email: data?.email,
       password: data?.password,
       state: data?.state,
+    });
+  }
+
+  private patchValueVehcile(data) {
+    this.vehicleForm.patchValue({
+      plate: data?.plate,
+      bodywork: data?.bodywork,
+      brand: data?.brand,
+      color: data?.color,
+      countryOrigin: data?.countryOrigin,
+      cylinder: data?.cylinder,
+      dateShielding: data?.dateShielding,
+      divipola: data?.divipola,
+      dueDateSoat: this.formattedDate(data?.dueDateSoat),
+      enrollmentDate: this.formattedDate(data?.enrollmentDate),
+      expeditionDateSoat: this.formattedDate(data?.expeditionDateSoat),
+      fuel: data?.fuel,
+      identificationOwner: data?.identificationOwner,
+      isShielding: data?.isShielding,
+      levelShielding: data?.levelShielding,
+      line: data?.line,
+      model: data?.model,
+      noChasis: data?.noChasis,
+      noMotor: data?.noMotor,
+      noSerie: data?.noSerie,
+      noVin: data?.noVin,
+      occupant: data?.occupant,
+      pbv: data?.pbv,
+      requireTechReview: data?.requireTechReview,
+      soatNumber: data?.soatNumber,
+      state2: data?.state,
+      statusVehicle: data?.statusVehicle,
+      techReview: data?.techReview,
+      tonnage: data?.tonnage,
+      transitAgency: data?.transitAgency,
+      typeService: data?.typeService,
+      typeVehicle: data?.typeVehicle,
     });
   }
 }
