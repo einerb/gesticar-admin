@@ -126,6 +126,7 @@ export class ModalVehicleComponent implements OnInit {
 
         if (res.data?.mensaje !== undefined && res.data?.mensaje !== "") {
           this.globalService.onFailure(res.data.mensaje);
+          this.loading = false;
         } else {
           this.blockUI.start();
 

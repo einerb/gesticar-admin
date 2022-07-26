@@ -8,20 +8,20 @@ import { GlobalService } from "./global.service";
 @Injectable({
   providedIn: "root",
 })
-export class LicensesService {
+export class ServicesService {
   constructor(private readonly globalService: GlobalService) {}
 
   public getAll(id: number): Observable<any> {
-    return this.globalService.get(Api.Endpoints.LICENSE.BASE + `/${id}`).pipe(
+    return this.globalService.get(Api.Endpoints.SERVICE.BASE + `/${id}`).pipe(
       map((res) => {
         return res;
       })
     );
   }
 
-  public create(license: any, id: number) {
+  public create(service: any, id: number) {
     return this.globalService
-      .post(Api.Endpoints.LICENSE.BASE + `/${id}`, license)
+      .post(Api.Endpoints.SERVICE.BASE + `/${id}`, service)
       .pipe(
         map((res) => {
           return res;
@@ -29,9 +29,9 @@ export class LicensesService {
       );
   }
 
-  public update(id: number, license: any) {
+  public update(id: number, service: any) {
     return this.globalService
-      .put(Api.Endpoints.LICENSE.BASE + `/${id}`, license)
+      .put(Api.Endpoints.SERVICE.BASE + `/${id}`, service)
       .pipe(
         map((res) => {
           return res;
@@ -41,7 +41,7 @@ export class LicensesService {
 
   public delete(id: number) {
     return this.globalService
-      .delete(Api.Endpoints.LICENSE.BASE + "/" + id)
+      .delete(Api.Endpoints.SERVICE.BASE + "/" + id)
       .pipe(
         map((res) => {
           return res;

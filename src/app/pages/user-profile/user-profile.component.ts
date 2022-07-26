@@ -21,6 +21,7 @@ import { ModalOwnerComponent } from "./modal-owner/modal-owner.component";
 import { ModalLicenseComponent } from "../workshop-profile/modal-license/modal-license.component";
 import { ModalVehicleComponent } from "../workshop-profile/modal-vehicle/modal-vehicle.component";
 import { Car } from "src/app/entities/car.entity";
+import { ModalNewServiceComponent } from "./modal-new-service/modal-new-service.component";
 
 @Component({
   selector: "app-user-profile",
@@ -231,6 +232,21 @@ export class UserProfileComponent implements OnInit {
     this.blockUI.stop();
   }
 
+  public openModalService(user?: User) {
+    const modalRef = this.modalService.open(ModalNewServiceComponent);
+    const data = {
+      title: `Crear Servicio`,
+      user: user,
+    };
+    modalRef.componentInstance.data = data;
+
+    modalRef.result.then((result) => {
+      if (result == "success") {
+        this.getUserInfo(user.identification);
+      }
+    });
+  }
+
   public openModalvehicle(vehicle?: Car, isExist?: boolean, id?: number) {
     const modalRef = this.modalService.open(ModalVehicleComponent, {
       size: "lg",
@@ -333,9 +349,9 @@ export class UserProfileComponent implements OnInit {
     if (stateService === "ACTIVE") {
       this.servicesActive += 1;
     } else if (stateService === "CREATED") {
-      this.servicesCompleted += 1;
-    } else {
       this.servicesCreated += 1;
+    } else {
+      this.servicesCompleted += 1;
     }
   }
 

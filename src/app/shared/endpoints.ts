@@ -43,4 +43,7 @@ export const Endpoint = {
   LICENSE: {
     BASE: environment.apiHost + environment.apiVersion + "license",
   },
+  SERVICE: {
+    BASE: environment.apiHost + environment.apiVersion + "service",
+  },
 };

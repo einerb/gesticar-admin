@@ -25,6 +25,7 @@
             <button
               class="btn btn-info"
               [disabled]="!infoFullUser?.workshops.state"
+              (click)="openModalService(infoFullUser)"
             >
               Crear Servicio
             </button>
@@ -37,6 +38,12 @@
                 !infoFullUser?.workshops.state ||
                 infoFullUser?.services.length === 0
               "
+            >
+              Ver Servicios
+            </button>
+            <button
+              class="btn btn-info"
+              *ngIf="infoFullUser?.services.length > 0"
             >
               Ver Servicios
             </button>
