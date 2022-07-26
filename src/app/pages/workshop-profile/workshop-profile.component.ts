@@ -131,7 +131,7 @@ export class WorkshopProfileComponent implements OnInit {
     modalRef.componentInstance.admin = this.userInfo;
 
     modalRef.result.then((result) => {
-      if (result == "success") {
+      if (result?.state == "success") {
         this.getWokshopInfo(this.nit);
 
         if (this.userInfo.role.role === "ADMIN") {
@@ -145,7 +145,7 @@ export class WorkshopProfileComponent implements OnInit {
             allowOutsideClick: false,
           }).then((resultIn) => {
             if (resultIn.isConfirmed) {
-              this.openModalvehicle(null, false);
+              this.openModalvehicle(null, false, result.data);
             }
           });
         }

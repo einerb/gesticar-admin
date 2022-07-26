@@ -116,7 +116,7 @@ export class ModalNewWorkshopComponent implements OnInit {
     modalRef.componentInstance.admin = this.userInfo;
 
     modalRef.result.then((result) => {
-      if (result == "success") {
+      if (result?.state == "success") {
         if (this.userInfo.role.role === "ADMIN") {
           Swal.fire({
             title: "Pasos iniciales",

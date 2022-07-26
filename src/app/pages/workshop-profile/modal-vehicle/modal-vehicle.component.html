@@ -13,17 +13,17 @@
                 class="form-control"
                 placeholder="AAA123"
                 maxlength="6"
-                formControlName="plate"
+                formControlName="plateSearch"
               />
               <span
                 class="badge badge-danger"
-                *ngIf="f.plate.hasError('required')"
+                *ngIf="f.plateSearch.hasError('required')"
               >
                 La placa es requerida *
               </span>
               <span
                 class="badge badge-danger"
-                *ngIf="f.plate.hasError('pattern')"
+                *ngIf="f.plateSearch.hasError('pattern')"
               >
                 La placa es inválida *
               </span>
@@ -33,8 +33,9 @@
                 type="button"
                 class="btn btn-primary"
                 (click)="searchPlate()"
+                [disabled]="!searchForm.valid"
               >
-                Buscar
+                {{ loading ? "Buscando..." : "Buscar" }}
               </button>
             </div>
           </div>
@@ -57,7 +58,12 @@
   >
     Cerrar
   </button>
-  <button class="btn btn-success" (click)="create()" *ngIf="!data.isExist">
+  <button
+    class="btn btn-success"
+    (click)="create()"
+    [disabled]="!result"
+    *ngIf="!data.isExist"
+  >
     Crear
   </button>
 </div>

@@ -69,7 +69,7 @@ export class ModalAssignAdminComponent implements OnInit {
     this.userService.create(data).subscribe((res) => {
       if (res.code > 1000) {
         this.globalService.onSuccess(res.message);
-        this.resultOp.close("success");
+        this.resultOp.close({ state: "success", data: res.data });
       } else {
         this.globalService.onFailure(res.error);
       }

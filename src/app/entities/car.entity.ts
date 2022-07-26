@@ -1,5 +1,5 @@
 export class Car {
-  id: number;
+  id?: number;
   plate: string;
   color: string;
   brand: string;
@@ -22,6 +22,7 @@ export class Car {
   fuel: string;
   transitAgency: string;
   soatNumber: string;
+  identificationOwner: number;
   expeditionDateSoat: string;
   dueDateSoat: string;
   techReview: boolean;
@@ -31,7 +32,7 @@ export class Car {
   dateShielding: string;
   statusVehicle: string;
   state: boolean;
-  createdAt: string;
+  createdAt?: string;
 
   constructor(item?: Car) {
     this.id = item && item.id ? item.id : 0;
