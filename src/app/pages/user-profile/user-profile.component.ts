@@ -35,9 +35,9 @@ export class UserProfileComponent implements OnInit {
   public infoOwner: any[] = [];
   public infoPenalty: any[] = [];
   public age: number;
-  public servicesCompleted: number = 0;
-  public servicesActive: number = 0;
-  public servicesCreated: number = 0;
+  public servicesCompleted: string[] = [];
+  public servicesActive: string[] = [];
+  public servicesCreated: string[] = [];
   public createdAt: string;
   public allowEdit: boolean = false;
   public userInfo: User;
@@ -345,16 +345,6 @@ export class UserProfileComponent implements OnInit {
     return dateFinal;
   }
 
-  private getServiceCount(stateService: string) {
-    if (stateService === "ACTIVE") {
-      this.servicesActive += 1;
-    } else if (stateService === "CREATED") {
-      this.servicesCreated += 1;
-    } else {
-      this.servicesCompleted += 1;
-    }
-  }
-
   private getCreatedAt(date: string) {
     this.createdAt = moment(date).format("ll");
   }
@@ -423,9 +413,15 @@ export class UserProfileComponent implements OnInit {
       this.getAge(res.data?.birthdate);
       this.getCreatedAt(res.data?.createdAt);
       if (this.infoFullUser?.car) this.patchValueVehcile(this.infoFullUser.car);
-      res.data?.services.forEach((service) => {
-        this.getServiceCount(service.state);
-      });
+      this.servicesActive = res.data?.services.filter(
+        (service) => service.state === "ACTIVE"
+      );
+      this.servicesCreated = res.data?.services.filter(
+        (service) => service.state === "CREATED"
+      );
+      this.servicesCompleted = res.data?.services.filter(
+        (service) => service.state === "COMPLETED"
+      );
 
       if (this.infoFullUser?.workshops !== undefined)
         this.infoFullUser.workshops = res.data?.workshops[0];

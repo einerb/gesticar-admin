@@ -297,7 +297,7 @@
                           <i
                             class="ni ni-fat-remove text-danger"
                             style="cursor: pointer; font-size: 30px"
-                            (click)="delete(user.id)"
+                            (click)="delete(user)"
                             data-toggle="tooltip"
                             ngbTooltip="Eliminar"
                           ></i>
@@ -389,13 +389,7 @@
                           <a
                             class="mb-0 text-sm"
                             *ngIf="user.car?.plate"
-                            (click)="
-                              openModalvehicle(
-                                user.car,
-                                true,
-                                user.identification
-                              )
-                            "
+                            (click)="openModalvehicle(user.car, true, user)"
                             style="cursor: pointer"
                             ><i class="fas fa-car"></i>
                             {{ user.car?.plate | uppercase }}</a
@@ -409,11 +403,7 @@
                             class="mb-0 text-sm"
                             *ngIf="user.licenses.length > 0"
                             (click)="
-                              openModalLicense(
-                                user?.licenses,
-                                true,
-                                user?.identification
-                              )
+                              openModalLicense(user?.licenses, true, user)
                             "
                             style="cursor: pointer"
                             data-toggle="tooltip"
@@ -439,7 +429,7 @@
                             *ngIf="infoFullWorkshop?.state"
                             class="ni ni-fat-remove text-danger"
                             style="cursor: pointer; font-size: 30px"
-                            (click)="delete(user.id)"
+                            (click)="delete(user)"
                             data-toggle="tooltip"
                             ngbTooltip="Eliminar"
                           ></i>

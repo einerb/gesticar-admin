@@ -31,7 +31,6 @@ export class ModalNewWorkshopComponent implements OnInit {
     private readonly workshopService: WorkshopService,
     private readonly authService: AuthService,
     public readonly globalService: GlobalService,
-    private readonly helpService: HelpService,
     public activeModal: NgbActiveModal,
     private formBuilder: FormBuilder,
     private router: Router,
@@ -128,7 +127,7 @@ export class ModalNewWorkshopComponent implements OnInit {
             allowOutsideClick: false,
           }).then((resultIn) => {
             if (resultIn.isConfirmed) {
-              this.openModalvehicle(null, false);
+              this.openModalvehicle(null, false, result?.data);
             } else {
               this.router.navigate(["/workshop-profile", this.workshopId]);
             }
@@ -166,7 +165,7 @@ export class ModalNewWorkshopComponent implements OnInit {
           allowOutsideClick: false,
         }).then((resultIn) => {
           if (resultIn.isConfirmed) {
-            this.openModalLicense(null, false, 123);
+            this.openModalLicense(null, false, id);
           } else {
             this.router.navigate(["/workshop-profile", this.workshopId]);
           }
@@ -175,7 +174,7 @@ export class ModalNewWorkshopComponent implements OnInit {
     });
   }
 
-  public openModalLicense(licencias: [], isExist?: boolean, id?: number) {
+  public openModalLicense(licencias: [], isExist?: boolean, user?: number) {
     const modalRef = this.modalService.open(ModalLicenseComponent, {
       size: "lg",
     });
@@ -184,7 +183,7 @@ export class ModalNewWorkshopComponent implements OnInit {
       title: isExist ? "Licencias" : "Agregar licencia",
       license: licencias,
       isExist: isExist,
-      id: id,
+      id: user,
     };
     modalRef.componentInstance.data = data;
   }

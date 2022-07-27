@@ -13,6 +13,7 @@ import {
   GlobalService,
   HelpService,
   UserService,
+  VehicleService,
 } from "src/app/services";
 import { ModalAssignAdminComponent } from "./modal-assign-admin/modal-assign-admin.component";
 import { User } from "src/app/entities/user.entity";
@@ -42,7 +43,7 @@ export class WorkshopProfileComponent implements OnInit {
     private readonly globalService: GlobalService,
     private readonly authService: AuthService,
     private readonly userService: UserService,
-    private readonly helpService: HelpService,
+    private readonly vehicleService: VehicleService,
     private route: ActivatedRoute,
     private formBuilder: FormBuilder,
     config: NgbModalConfig,
@@ -69,7 +70,7 @@ export class WorkshopProfileComponent implements OnInit {
     return this.editForm.controls;
   }
 
-  public delete(id: number) {
+  public delete(user: User) {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: "btn btn-danger",
@@ -90,13 +91,24 @@ export class WorkshopProfileComponent implements OnInit {
       })
       .then((result) => {
         if (result.isConfirmed) {
-          this.userService.delete(id).subscribe((res) => {
-            if (res.code > 1000) {
-              this.globalService.onSuccess(res.message);
-              this.getWokshopInfo(this.nit);
-            } else {
-              this.globalService.onFailure(res.error);
-            }
+          this.userService.getById(user.identification).subscribe((res2) => {
+            this.userService.delete(user.id).subscribe((res) => {
+              if (res.code > 1000) {
+                if (res2.data.car !== null) {
+                  this.vehicleService
+                    .delete(res2.data.car?.id)
+                    .subscribe(() => {
+                      this.globalService.onSuccess(res.message);
+                    });
+                } else {
+                  this.globalService.onSuccess(res.message);
+                }
+
+                this.getWokshopInfo(this.nit);
+              } else {
+                this.globalService.onFailure(res.error);
+              }
+            });
           });
         }
       });
@@ -153,7 +165,7 @@ export class WorkshopProfileComponent implements OnInit {
     });
   }
 
-  public openModalLicense(licencias: [], isExist?: boolean, id?: number) {
+  public openModalLicense(licencias: [], isExist?: boolean, user?: number) {
     const modalRef = this.modalService.open(ModalLicenseComponent, {
       size: "lg",
     });
@@ -162,12 +174,16 @@ export class WorkshopProfileComponent implements OnInit {
       title: isExist ? "Licencias" : "Agregar licencia",
       license: licencias,
       isExist: isExist,
-      id: id,
+      id: user,
     };
     modalRef.componentInstance.data = data;
+
+    modalRef.result.then(() => {
+      this.getWokshopInfo(this.nit);
+    });
   }
 
-  public openModalvehicle(vehicle?: Car, isExist?: boolean, id?: number) {
+  public openModalvehicle(vehicle?: Car, isExist?: boolean, user?: any) {
     const modalRef = this.modalService.open(ModalVehicleComponent, {
       size: "lg",
     });
@@ -177,7 +193,7 @@ export class WorkshopProfileComponent implements OnInit {
         : `Crear Vehículo`,
       vehicle: vehicle,
       isExist: isExist,
-      id: id,
+      id: user,
     };
     modalRef.componentInstance.data = data;
 
@@ -193,7 +209,9 @@ export class WorkshopProfileComponent implements OnInit {
           allowOutsideClick: false,
         }).then((resultIn) => {
           if (resultIn.isConfirmed) {
-            this.openModalLicense(null, false, 123);
+            this.userService.getById(user).subscribe((res) => {
+              this.openModalLicense(null, false, res.data.id);
+            });
           }
         });
       }

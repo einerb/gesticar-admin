@@ -44,7 +44,9 @@ export class ModalLicenseComponent implements OnInit {
       state: true,
     };
 
-    this.licenseService.create(data, this.data.id.id).subscribe((res) => {
+    let id = typeof this.data.id === "object" ? this.data.id.id : this.data.id;
+
+    this.licenseService.create(data, id).subscribe((res) => {
       if (res.code > 1000) {
         this.globalService.onSuccess(res.message);
         this.activeModal.close("success");

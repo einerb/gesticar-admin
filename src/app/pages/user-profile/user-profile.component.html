@@ -111,15 +111,23 @@
                   class="card-profile-stats d-flex justify-content-between mt-md-5"
                 >
                   <div>
-                    <span class="heading">{{ servicesCreated }}</span>
+                    <span class="heading">{{
+                      servicesCreated.length > 0 ? servicesCreated.length : 0
+                    }}</span>
                     <span class="description">Creado</span>
                   </div>
                   <div>
-                    <span class="heading">{{ servicesActive }}</span>
+                    <span class="heading">{{
+                      servicesActive.length > 0 ? servicesActive.length : 0
+                    }}</span>
                     <span class="description">Activo</span>
                   </div>
                   <div>
-                    <span class="heading">{{ servicesCompleted }}</span>
+                    <span class="heading">{{
+                      servicesCompleted.length > 0
+                        ? servicesCompleted.length
+                        : 0
+                    }}</span>
                     <span class="description">Completados</span>
                   </div>
                 </div>
