@@ -37,6 +37,16 @@ export class ServicesService {
       );
   }
 
+  public createEvent(evento: any, id: number) {
+    return this.globalService
+      .post(Api.Endpoints.NEWS.BASE + `/${id}`, evento)
+      .pipe(
+        map((res) => {
+          return res;
+        })
+      );
+  }
+
   public update(id: number, service: any) {
     return this.globalService
       .put(Api.Endpoints.SERVICE.BASE + `/${id}`, service)

@@ -6,8 +6,17 @@
           type="button"
           class="btn btn-info"
           [disabled]="state === 'COMPLETED'"
+          (click)="openModalEvent(idServicio)"
         >
-          Crear evento
+          Crear novedad
+        </button>
+        <button
+          type="button"
+          class="btn btn-success"
+          (click)="completed(idServicio)"
+          [disabled]="state === 'COMPLETED'"
+        >
+          Finalizar servicio
         </button>
         <!-- Card stats -->
       </div>

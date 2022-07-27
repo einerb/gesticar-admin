@@ -46,4 +46,7 @@ export const Endpoint = {
   SERVICE: {
     BASE: environment.apiHost + environment.apiVersion + "service",
   },
+  NEWS: {
+    BASE: environment.apiHost + environment.apiVersion + "news",
+  },
 };

@@ -24,6 +24,7 @@ import { ModalVehicleComponent } from "src/app/pages/workshop-profile/modal-vehi
 import { ModalLicenseComponent } from "src/app/pages/workshop-profile/modal-license/modal-license.component";
 import { ServiceProfileComponent } from "src/app/pages/service-profile/service-profile.component";
 import { ServiceEventsComponent } from "src/app/pages/service-events/service-events.component";
+import { ModalNewEventComponent } from "src/app/pages/service-events/modal-new-event/modal-new-event.component";
 
 @NgModule({
   imports: [
@@ -55,6 +56,7 @@ import { ServiceEventsComponent } from "src/app/pages/service-events/service-eve
     ServicesComponent,
     ServiceProfileComponent,
     ServiceEventsComponent,
+    ModalNewEventComponent,
   ],
   providers: [],
 })

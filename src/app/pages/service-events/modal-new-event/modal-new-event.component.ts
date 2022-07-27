@@ -2,14 +2,14 @@ import { Component, Input, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
-import { GlobalService, ServicesService } from "src/app/services/index";
+import { GlobalService, ServicesService } from "src/app/services";
 
 @Component({
-  selector: "app-modal-new-service",
-  templateUrl: "./modal-new-service.component.html",
-  styleUrls: ["./modal-new-service.component.scss"],
+  selector: "app-modal-new-event",
+  templateUrl: "./modal-new-event.component.html",
+  styleUrls: ["./modal-new-event.component.scss"],
 })
-export class ModalNewServiceComponent implements OnInit {
+export class ModalNewEventComponent implements OnInit {
   @Input() data;
   public addForm: FormGroup;
 
@@ -22,8 +22,7 @@ export class ModalNewServiceComponent implements OnInit {
     this.createForm();
   }
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   get g() {
     return this.addForm.controls;
@@ -35,11 +34,12 @@ export class ModalNewServiceComponent implements OnInit {
     }
 
     const data = {
-      title: this.addForm.get("title").value,
+      name: this.addForm.get("name").value,
       description: this.addForm.get("description").value,
+      price: this.addForm.get("price").value,
     };
 
-    this.serviceService.create(data, this.data.user.id).subscribe((res) => {
+    this.serviceService.createEvent(data, this.data.id).subscribe((res) => {
       if (res.code > 1000) {
         this.globalService.onSuccess(res.message);
         this.activeModal.close("success");
@@ -51,8 +51,9 @@ export class ModalNewServiceComponent implements OnInit {
 
   private createForm() {
     this.addForm = this.formBuilder.group({
-      title: ["", [Validators.required]],
+      name: ["", [Validators.required]],
       description: ["", [Validators.required]],
+      price: [0, [Validators.required]],
     });
   }
 }
