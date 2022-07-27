@@ -41,12 +41,17 @@
             >
               Ver Servicios
             </button>
-            <button
+            <a
               class="btn btn-info"
               *ngIf="infoFullUser?.services.length > 0"
+              [routerLink]="[
+                '/user-profile/',
+                infoFullUser?.identification,
+                'service-profile'
+              ]"
             >
               Ver Servicios
-            </button>
+            </a>
           </ng-container>
           <ng-container *ngIf="infoFullUser?.car === null">
             <button

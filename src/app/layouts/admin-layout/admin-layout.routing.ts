@@ -8,7 +8,8 @@ import { AuthGuard } from "src/app/services/guards/auth.guard";
 import { WorkshopProfileComponent } from "src/app/pages/workshop-profile/workshop-profile.component";
 import { SettingsComponent } from "src/app/pages/settings/settings.component";
 import { ServicesComponent } from "src/app/pages/services/services.component";
-import { ServicesDetailsComponent } from "src/app/pages/services-details/services-details.component";
+import { ServiceProfileComponent } from "src/app/pages/service-profile/service-profile.component";
+import { ServiceEventsComponent } from "src/app/pages/service-events/service-events.component";
 
 export const AdminLayoutRoutes: Routes = [
   {
@@ -37,10 +38,13 @@ export const AdminLayoutRoutes: Routes = [
     component: SettingsComponent,
     canActivate: [AuthGuard],
   },
-  { path: "user-profile/:id/services", component: ServicesComponent },
-  { path: "workshop-profile/:id/services", component: ServicesComponent },
+  { path: "workshops/services", component: ServicesComponent },
   {
-    path: "user-profile/:id/services/:id",
-    component: ServicesDetailsComponent,
+    path: "user-profile/:id/service-profile",
+    component: ServiceProfileComponent,
+  },
+  {
+    path: "user-profile/:id/service-profile/:hash/service-events",
+    component: ServiceEventsComponent,
   },
 ];

@@ -35,6 +35,7 @@
     "ng-block-ui": "^3.0.2",
     "ngx-clipboard": "15.0.1",
     "ngx-toastr": "14.2.2",
+    "ngx-vertical-timeline": "0.0.1",
     "nouislider": "15.5.1",
     "rxjs": "^7.5.5",
     "sweetalert2": "^11.4.22",

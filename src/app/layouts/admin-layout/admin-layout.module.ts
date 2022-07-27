@@ -1,11 +1,11 @@
-import { NgModule, LOCALE_ID } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 import { CommonModule } from "@angular/common";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { BlockUIModule } from "ng-block-ui";
-import { ClipboardModule } from "ngx-clipboard";
+import { NgxVerticalTimelineModule } from "ngx-vertical-timeline";
 
 import { AdminLayoutRoutes } from "./admin-layout.routing";
 import { DashboardComponent } from "../../pages/dashboard/dashboard.component";
@@ -18,11 +18,12 @@ import { ModalAssignAdminComponent } from "src/app/pages/workshop-profile/modal-
 import { ModalOwnerComponent } from "src/app/pages/user-profile/modal-owner/modal-owner.component";
 import { ModalPenaltyComponent } from "src/app/pages/user-profile/modal-penalty/modal-penalty.component";
 import { ModalNewWorkshopComponent } from "src/app/pages/workshops/modal-new-workshop/modal-new-workshop.component";
-import { ServicesDetailsComponent } from "src/app/pages/services-details/services-details.component";
 import { ServicesComponent } from "src/app/pages/services/services.component";
 import { ModalNewServiceComponent } from "src/app/pages/user-profile/modal-new-service/modal-new-service.component";
 import { ModalVehicleComponent } from "src/app/pages/workshop-profile/modal-vehicle/modal-vehicle.component";
 import { ModalLicenseComponent } from "src/app/pages/workshop-profile/modal-license/modal-license.component";
+import { ServiceProfileComponent } from "src/app/pages/service-profile/service-profile.component";
+import { ServiceEventsComponent } from "src/app/pages/service-events/service-events.component";
 
 @NgModule({
   imports: [
@@ -32,7 +33,7 @@ import { ModalLicenseComponent } from "src/app/pages/workshop-profile/modal-lice
     ReactiveFormsModule,
     HttpClientModule,
     NgbModule,
-    ClipboardModule,
+    NgxVerticalTimelineModule,
     BlockUIModule.forRoot({
       message: "Cargando...",
     }),
@@ -52,7 +53,8 @@ import { ModalLicenseComponent } from "src/app/pages/workshop-profile/modal-lice
     ModalVehicleComponent,
     ModalNewServiceComponent,
     ServicesComponent,
-    ServicesDetailsComponent,
+    ServiceProfileComponent,
+    ServiceEventsComponent,
   ],
   providers: [],
 })

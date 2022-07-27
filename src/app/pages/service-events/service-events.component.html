@@ -1,0 +1,54 @@
+<block-ui>
+  <div class="header bg-gradient-warning pb-8 pt-5 pt-md-8">
+    <div class="container-fluid">
+      <div class="header-body">
+        <button
+          type="button"
+          class="btn btn-info"
+          [disabled]="state === 'COMPLETED'"
+        >
+          Crear evento
+        </button>
+        <!-- Card stats -->
+      </div>
+    </div>
+  </div>
+  <!-- Page content -->
+  <div class="container-fluid mt--7">
+    <!-- Table -->
+    <div class="row">
+      <div class="col">
+        <div class="card shadow">
+          <div class="card-header border-0">
+            <h3 class="mb-0">
+              Historial de eventos
+              <a
+                [routerLink]="['/user-profile/', id, 'service-profile']"
+                class="btn btn-sm btn-outline-primary"
+                ><i class="fas fa-angle-left"></i> Volver a servicios</a
+              >
+            </h3>
+            <hr class="my-4" />
+          </div>
+          <div class="table-responsive">
+            <lib-ngx-vertical-timeline
+              [(items)]="news"
+              *ngIf="news.length > 0"
+            ></lib-ngx-vertical-timeline>
+
+            <div
+              class="alert alert-danger alert-dismissible fade show col-lg-10 offset-lg-1 mb-5"
+              role="alert"
+              *ngIf="news.length === 0"
+            >
+              <span class="alert-inner--text"
+                ><strong>Oppps!</strong> Al parecer este servicio no tiene
+                eventos generados</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</block-ui>

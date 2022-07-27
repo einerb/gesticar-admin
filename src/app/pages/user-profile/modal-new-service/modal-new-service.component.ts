@@ -24,7 +24,6 @@ export class ModalNewServiceComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.data);
   }
 
   get g() {

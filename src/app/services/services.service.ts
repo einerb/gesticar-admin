@@ -19,6 +19,14 @@ export class ServicesService {
     );
   }
 
+  public getById(hash: string) {
+    return this.globalService.get(Api.Endpoints.SERVICE.BASE + "/" + hash).pipe(
+      map((res) => {
+        return res;
+      })
+    );
+  }
+
   public create(service: any, id: number) {
     return this.globalService
       .post(Api.Endpoints.SERVICE.BASE + `/${id}`, service)
@@ -32,6 +40,16 @@ export class ServicesService {
   public update(id: number, service: any) {
     return this.globalService
       .put(Api.Endpoints.SERVICE.BASE + `/${id}`, service)
+      .pipe(
+        map((res) => {
+          return res;
+        })
+      );
+  }
+
+  public completed(id: number) {
+    return this.globalService
+      .put(Api.Endpoints.SERVICE.BASE + `/${id}/completed`)
       .pipe(
         map((res) => {
           return res;
