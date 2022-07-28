@@ -18,6 +18,7 @@ export class ServiceEventsComponent implements OnInit {
   public id: string;
   public idServicio: number;
   public state: string;
+  public total: string;
 
   constructor(
     public readonly serviceService: ServicesService,
@@ -82,8 +83,11 @@ export class ServiceEventsComponent implements OnInit {
     this.serviceService.getById(hash).subscribe((res) => {
       this.state = res.data.state;
       this.idServicio = res.data.id;
+      let priceTotal = 0;
       if (res.data?.news.length > 0) {
         res.data.news.forEach((element) => {
+          priceTotal += element.price;
+          this.total = `$ ${priceTotal.toLocaleString("es-CO")}`;
           this.news.push({
             icon: "fas fa-calendar-alt",
             styleClass: "",

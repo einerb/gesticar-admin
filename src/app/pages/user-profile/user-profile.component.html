@@ -24,7 +24,7 @@
           <ng-container *ngIf="infoFullUser?.car !== null">
             <button
               class="btn btn-info"
-              [disabled]="!infoFullUser?.workshops.state"
+              [disabled]="!infoFullUser?.workshops?.state"
               (click)="openModalService(infoFullUser)"
             >
               Crear Servicio
@@ -35,7 +35,7 @@
               class="btn btn-info"
               *ngIf="infoFullUser?.services.length === 0"
               [disabled]="
-                !infoFullUser?.workshops.state ||
+                !infoFullUser?.workshops?.state ||
                 infoFullUser?.services.length === 0
               "
             >
@@ -56,7 +56,7 @@
           <ng-container *ngIf="infoFullUser?.car === null">
             <button
               class="btn btn-info"
-              [disabled]="!infoFullUser?.workshops.state"
+              [disabled]="!infoFullUser?.workshops?.state"
               (click)="
                 openModalvehicle(null, false, infoFullUser?.identification)
               "
@@ -67,7 +67,7 @@
           <ng-container *ngIf="infoFullUser?.car !== null">
             <button
               class="btn btn-warning"
-              [disabled]="!infoFullUser?.workshops.state"
+              [disabled]="!infoFullUser?.workshops?.state"
               (click)="openModalLicense(null, false, infoFullUser)"
             >
               Agregar licencia
@@ -75,7 +75,7 @@
           </ng-container>
           <span
             *ngIf="
-              !infoFullUser?.workshops.state && userInfo?.role.role === 'ADMIN'
+              !infoFullUser?.workshops?.state && userInfo?.role?.role === 'ADMIN'
             "
             class="badge badge-default"
             data-toggle="tooltip"

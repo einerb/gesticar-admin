@@ -93,6 +93,9 @@ export class UserProfileComponent implements OnInit {
   }
 
   public edit(identification: number) {
+    this.editForm.get("birthdate").setValidators(null);
+    this.editForm.get("birthdate").updateValueAndValidity();
+
     if (this.editForm.invalid) {
       return;
     }
@@ -123,6 +126,15 @@ export class UserProfileComponent implements OnInit {
   }
 
   public editVehicle() {
+    this.vehicleForm.get("dateShielding").setValidators(null);
+    this.vehicleForm.get("dateShielding").updateValueAndValidity();
+    this.vehicleForm.get("dueDateSoat").setValidators(null);
+    this.vehicleForm.get("dueDateSoat").updateValueAndValidity();
+    this.vehicleForm.get("enrollmentDate").setValidators(null);
+    this.vehicleForm.get("enrollmentDate").updateValueAndValidity();
+    this.vehicleForm.get("expeditionDateSoat").setValidators(null);
+    this.vehicleForm.get("expeditionDateSoat").updateValueAndValidity();
+
     if (this.vehicleForm.invalid) {
       return;
     }
@@ -319,7 +331,7 @@ export class UserProfileComponent implements OnInit {
 
   private formattedDate(date: string) {
     let dateFinal;
-    if (date !== undefined) {
+    if (date != undefined || date != null) {
       let dateFormatted = date.split("-");
 
       dateFinal = {
@@ -328,7 +340,11 @@ export class UserProfileComponent implements OnInit {
         day: parseInt(dateFormatted[2]),
       };
     } else {
-      dateFinal = null;
+      dateFinal = dateFinal = {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth(),
+        day: new Date().getDay(),
+      };
     }
 
     return dateFinal;
@@ -336,7 +352,7 @@ export class UserProfileComponent implements OnInit {
 
   private formattedDateInv(date: any) {
     let dateFinal;
-    if (date !== undefined) {
+    if (date != undefined || date != null) {
       dateFinal = `${date?.year}-${date?.month}-${date?.day}`;
     } else {
       dateFinal = null;
@@ -358,20 +374,25 @@ export class UserProfileComponent implements OnInit {
 
   private getInfoOwner(car: any) {
     this.vehicleService.getOwner(car.plate).subscribe((res: any) => {
-      res.data.propietarios.forEach((element) => {
-        this.infoOwner.push({
-          documentType: element.idTipoDocumento,
-          documentNumber: element.noDocumento,
-          fullname: element.nombreCompleto,
-        });
-      });
+      res.data?.propietarios.forEach(
+        (element) => {
+          this.infoOwner.push({
+            documentType: element.idTipoDocumento,
+            documentNumber: element.noDocumento,
+            fullname: element.nombreCompleto,
+          });
+        },
+        (error) => console.log(error)
+      );
     });
   }
 
   private getInfoPenalty(documentType: string, documentNumber: number) {
+    this.blockUI.start();
     this.vehicleService
       .getPenalty(documentType, documentNumber)
       .subscribe((res: any) => {
+        this.blockUI.stop();
         if (res.data != "") {
           res.data.comparendos.forEach((element) => {
             this.infoPenalty.push({
@@ -452,7 +473,7 @@ export class UserProfileComponent implements OnInit {
       color: data?.color,
       countryOrigin: data?.countryOrigin,
       cylinder: data?.cylinder,
-      dateShielding: data?.dateShielding,
+      dateShielding: this.formattedDate(data?.dateShielding),
       divipola: data?.divipola,
       dueDateSoat: this.formattedDate(data?.dueDateSoat),
       enrollmentDate: this.formattedDate(data?.enrollmentDate),

@@ -30,6 +30,11 @@ export class ModalLicenseComponent implements OnInit {
   }
 
   public create() {
+    this.addForm.get("expeditionDate").setValidators(null);
+    this.addForm.get("expeditionDate").updateValueAndValidity();
+    this.addForm.get("dueDate").setValidators(null);
+    this.addForm.get("dueDate").updateValueAndValidity();
+
     if (this.addForm.invalid) {
       return;
     }
@@ -77,7 +82,7 @@ export class ModalLicenseComponent implements OnInit {
 
   private formattedDateInv(date: any) {
     let dateFinal;
-    if (date !== undefined) {
+    if (date != undefined || date != null) {
       dateFinal = `${date.year}-${date.month}-${date.day}`;
     } else {
       dateFinal = null;

@@ -53,6 +53,15 @@ export class ModalVehicleComponent implements OnInit {
   }
 
   public create() {
+    this.addForm.get("dateShielding").setValidators(null);
+    this.addForm.get("dateShielding").updateValueAndValidity();
+    this.addForm.get("dueDateSoat").setValidators(null);
+    this.addForm.get("dueDateSoat").updateValueAndValidity();
+    this.addForm.get("enrollmentDate").setValidators(null);
+    this.addForm.get("enrollmentDate").updateValueAndValidity();
+    this.addForm.get("expeditionDateSoat").setValidators(null);
+    this.addForm.get("expeditionDateSoat").updateValueAndValidity();
+
     if (this.addForm.invalid) {
       return;
     }
@@ -215,21 +224,24 @@ export class ModalVehicleComponent implements OnInit {
   private formattedDate(date: string) {
     let dateFinal;
     let dateFormatted;
-
-    if (date.includes("/")) {
-      dateFormatted = date?.split("/");
-      dateFinal = {
-        year: parseInt(dateFormatted[2]),
-        month: parseInt(dateFormatted[1]),
-        day: parseInt(dateFormatted[0]),
-      };
+    if (date != undefined || date != null) {
+      if (date.includes("/")) {
+        dateFormatted = date?.split("/");
+        dateFinal = {
+          year: parseInt(dateFormatted[2]),
+          month: parseInt(dateFormatted[1]),
+          day: parseInt(dateFormatted[0]),
+        };
+      } else {
+        dateFormatted = date?.split("-");
+        dateFinal = {
+          year: parseInt(dateFormatted[0]),
+          month: parseInt(dateFormatted[1]),
+          day: parseInt(dateFormatted[2]),
+        };
+      }
     } else {
-      dateFormatted = date?.split("-");
-      dateFinal = {
-        year: parseInt(dateFormatted[0]),
-        month: parseInt(dateFormatted[1]),
-        day: parseInt(dateFormatted[2]),
-      };
+      dateFinal = null;
     }
 
     return dateFinal;
@@ -237,7 +249,7 @@ export class ModalVehicleComponent implements OnInit {
 
   private formattedDateInv(date: any) {
     let dateFinal;
-    if (date !== undefined) {
+    if (date != undefined || date != null) {
       dateFinal = `${date.year}-${date.month}-${date.day}`;
     } else {
       dateFinal = null;
@@ -254,7 +266,7 @@ export class ModalVehicleComponent implements OnInit {
       color: data?.color,
       countryOrigin: data?.countryOrigin,
       cylinder: data?.cylinder,
-      dateShielding: data?.dateShielding,
+      dateShielding: this.formattedDate(data?.dateShielding),
       divipola: data?.divipola,
       dueDateSoat: this.formattedDate(data?.dueDateSoat),
       enrollmentDate: this.formattedDate(data?.enrollmentDate),

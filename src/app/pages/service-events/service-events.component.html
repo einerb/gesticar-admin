@@ -30,11 +30,14 @@
         <div class="card shadow">
           <div class="card-header border-0">
             <h3 class="mb-0">
-              Historial de eventos
+              Historial de novedades
               <a
                 [routerLink]="['/user-profile/', id, 'service-profile']"
                 class="btn btn-sm btn-outline-primary"
                 ><i class="fas fa-angle-left"></i> Volver a servicios</a
+              >
+              <span class="badge badge-success" style="font-size: 15px"
+                >TOTAL NOVEDADES: {{ total }}</span
               >
             </h3>
             <hr class="my-4" />
