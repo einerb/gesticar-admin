@@ -12,7 +12,7 @@
                     Talleres activos
                   </h5>
                   <span class="h2 font-weight-bold mb-0">{{
-                    workshopLength
+                    workshopLength > 0 ? workshopLength : 0
                   }}</span>
                 </div>
                 <div class="col-auto">
@@ -38,7 +38,7 @@
                     Nuevos usuarios
                   </h5>
                   <span class="h2 font-weight-bold mb-0">{{
-                    userLength
+                    userLength > 0 ? userLength : 0
                   }}</span>
                 </div>
                 <div class="col-auto">
@@ -64,7 +64,7 @@
                     Servicios activos
                   </h5>
                   <span class="h2 font-weight-bold mb-0">{{
-                    serviceLength
+                    serviceLength > 0 ? serviceLength : 0
                   }}</span>
                 </div>
                 <div class="col-auto">
@@ -90,7 +90,7 @@
                     Vehículos registrados
                   </h5>
                   <span class="h2 font-weight-bold mb-0"
-                    >{{ vehicleLength }}%</span
+                    >{{ vehicleLength > 0 ? vehicleLength : 0 }} %</span
                   >
                 </div>
                 <div class="col-auto">
